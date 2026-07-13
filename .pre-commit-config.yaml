@@ -1,0 +1,42 @@
+# To update the versions:
+#   pre-commit autoupdate
+repos:
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.8.5
+    hooks:
+      - id: uv-lock
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+        exclude: '\.ipynb$'
+      - id: debug-statements
+      - id: check-added-large-files
+        exclude: "bin/"
+      - id: check-json
+      - id: check-toml
+      - id: check-xml
+      - id: check-yaml
+      - id: check-builtin-literals
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: detect-private-key
+      - id: check-merge-conflict
+      - id: mixed-line-ending
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.7
+    hooks:
+      - id: ruff
+        name: 'ruff lint'
+        types_or: [python, pyi]
+        args: [--fix]
+
+      - id: ruff
+        name: 'ruff sort imports'
+        args: ["check", "--select", "I", "--fix"]
+        types_or: [python, pyi]
+
+      - id: ruff-format
+        name: 'ruff format'
+        types_or: [python, pyi]

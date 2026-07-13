@@ -1,0 +1,21 @@
+stages:
+  - lint
+  - test
+  - deploy
+
+include:
+  - local: .gitlab/ci/*.gitlab-ci.yml
+  - component: singular-code.de/singularit/ci-components/utilities/size/all@1.2.0
+  - component: $CI_SERVER_FQDN/singularit/ci-components/security/dependency-audit/sbom@0.3.6
+
+variables:
+  POSTGRES_HOST_AUTH_METHOD: trust
+  POSTGRES_DB: printer_dashboard
+  POSTGRES_USER: printer_dashboard
+  POSTGRES_PASSWORD: printer_dashboard
+  UV_LINK_MODE: copy
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_SOURCE_BRANCH_PROTECTED == 'false'
+    - if: $CI_PIPELINE_SOURCE != "merge_request_event" && $CI_COMMIT_REF_PROTECTED == 'true'

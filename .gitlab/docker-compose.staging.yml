@@ -1,0 +1,51 @@
+services:
+  migrations:
+    build:
+      context: ..
+      dockerfile: .gitlab/Dockerfile
+      target: base
+    environment:
+      - DJANGO_SETTINGS_MODULE=printer_dashboard.settings.staging
+      - DJANGO_SECRET_KEY
+      - POSTGRES_HOST_AUTH_METHOD
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_HOST=printer_dashboard-postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: [ "uv", "run", "manage.py", "migrate" ]
+
+  app:
+    extends:
+      service: migrations
+    build:
+      context: ..
+      dockerfile: .gitlab/Dockerfile
+      target: app
+    restart: unless-stopped
+    command: ["uv", "run", "gunicorn", "-b", ":8000", "--workers=3", "--enable-stdio-inheritance", "printer_dashboard.wsgi:application"]
+    expose:
+      - 8000
+  postgres:
+    networks:
+      default:
+        aliases:
+          - printer_dashboard-postgres
+    image: postgres:17
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-U", "${POSTGRES_USER}" ]
+      retries: 3
+      timeout: 5s
+
+
+volumes:
+  postgres-data:

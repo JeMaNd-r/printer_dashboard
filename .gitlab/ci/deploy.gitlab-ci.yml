@@ -1,0 +1,7 @@
+include:
+  - component: singular-code.de/singularit/ci-components/deployment/deploy-docker-compose/deployment@feat/major-update
+    inputs:
+      http: app
+      auth: "*>public>*"
+      compose-file: .gitlab/docker-compose.staging.yml
+      auto-stop-in: 6 months

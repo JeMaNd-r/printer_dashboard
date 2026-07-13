@@ -1,0 +1,29 @@
+django-test:
+  stage: test
+  interruptible: true
+  image: orbisk/django-test:3.13
+  extends:
+    - .size:medium
+  services:
+    - postgres:17
+  variables:
+    DJANGO_SETTINGS_MODULE: "printer_dashboard.settings.test"
+    POSTGRES_HOST: "postgres"
+    POSTGRES_PORT: "5432"
+  script:
+    - uv run manage.py test
+
+deploy-check:
+  stage: test
+  interruptible: true
+  allow_failure: true
+  image: orbisk/django-test:3.12
+  extends:
+    - .size:medium
+  variables:
+    DJANGO_SETTINGS_MODULE: "printer_dashboard.settings.staging"
+  script:
+    - uv run manage.py check --deploy --fail-level DEBUG --force-color
+  rules:
+    - if: $CI_COMMIT_REF_PROTECTED
+      allow_failure:  false

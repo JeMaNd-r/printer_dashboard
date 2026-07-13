@@ -1,0 +1,25 @@
+# Exclude a variety of commonly ignored directories.
+respect-gitignore = true
+
+line-length = 120
+
+[format]
+docstring-code-format = true
+docstring-code-line-length = 120
+
+[lint]
+# Add the `line-too-long` rule to the enforced rule set. By default, Ruff omits rules that
+# overlap with the use of a formatter, like Black, but we can override this behavior by
+# explicitly adding the rule.
+extend-select = ["E501", "N", "R", "I"]
+
+# Equivalent of Flake8's per-file-ignores
+[lint.per-file-ignores]
+# Ignore specific rules in settings files
+"*/settings/base.py" = ["E501"]
+"*/settings/local.py" = ["F401", "F403", "F405"]
+"*/settings/staging.py" = ["F401", "F403", "F405"]
+"*/settings/production.py" = ["F401", "F403", "F405"]
+"*/settings/test.py" = ["F401", "F403", "F405"]
+"**/__init__.py" = ["F401"]
+"**/migrations/*.py" = ["E501"]

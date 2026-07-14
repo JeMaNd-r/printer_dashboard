@@ -22,6 +22,7 @@ deploy-check:
     - .size:medium
   variables:
     DJANGO_SETTINGS_MODULE: "printer_dashboard.settings.staging"
+    DJANGO_SECRET_KEY: "not-very-secret-but-it's-fine-for-this-very-cool-deploy-check"
   script:
     - uv run manage.py check --deploy --fail-level DEBUG --force-color
   rules:

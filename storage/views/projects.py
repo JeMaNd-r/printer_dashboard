@@ -1,0 +1,19 @@
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, viewsets
+
+from storage.models import Project
+from storage.serializers import ProjectSerializer
+
+
+class ProjectViewSet(viewsets.ModelViewSet):
+    """
+    Viewset for viewing and editing projects.
+    """
+
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
+    search_fields = ["project_name", "owner__username", "=owner__first_name", "=owner__last_name"]
+    ordering_fields = ["project_name", "owner__username", "created_at", "updated_at"]
+    filterset_fields = ["status"]
+    ordering = "-updated_at"

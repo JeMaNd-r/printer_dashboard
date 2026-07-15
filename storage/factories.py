@@ -1,0 +1,52 @@
+from datetime import UTC, datetime
+
+import factory
+import factory.fuzzy
+from factory import post_generation
+
+from storage.models import PrinterStatus, Project, StatusChoices, User
+
+PRINTER_STATE_CHOICES = [
+    "IDLE",
+    "PREPARING",
+    "RUNNING",
+    "PAUSED",
+    "FINISHED",
+    "UNKNOWN",
+    "FAILED",
+]
+
+
+class UserFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = User
+
+    first_name = factory.Faker("first_name")
+    last_name = factory.Faker("last_name")
+    email = factory.Faker("email")
+    password = factory.Faker("password")
+
+
+class ProjectFactory(factory.django.DjangoModelFactory):
+    project_name = factory.Faker("sentence")
+    project_description = factory.Faker("text")
+    owner = factory.SubFactory(UserFactory)
+    is_created_manually = factory.fuzzy.FuzzyChoice([True, False])
+    status = factory.fuzzy.FuzzyChoice(StatusChoices.values)
+
+    class Meta:
+        model = Project
+
+    @post_generation
+    def post(self, create, extracted, **kwargs):
+        self.created_at = factory.fuzzy.FuzzyDateTime(datetime(2020, 1, 2, tzinfo=UTC)).evaluate(2, None, {})
+        self.save(update_fields=["created_at"])
+
+
+class PrinterStatusFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = PrinterStatus
+
+    project = factory.SubFactory(ProjectFactory)
+    state = factory.fuzzy.FuzzyChoice(PRINTER_STATE_CHOICES)
+    is_light_on = factory.fuzzy.FuzzyChoice([True, False])

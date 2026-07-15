@@ -1,0 +1,17 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+
+<ul id="navigation-bar">
+    <li><a class="active" href="{% url "dashboard:dashboard" %}">Dashboard</a></li>
+    <li><a href="{% url "dashboard:stats" %}">Stats</a></li>
+    <li><a href="{% url "dashboard:project-list" %}">Project List</a></li>
+</ul>
+
+<div class="main">
+    <h1>3D Printer Dashboard</h1>
+    <p>Dashboard content...</p>
+
+</div>
+
+{% endblock %}

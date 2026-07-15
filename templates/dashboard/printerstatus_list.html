@@ -1,0 +1,27 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+
+<ul id="navigation-bar">
+    <li><a href="{% url "dashboard:dashboard" %}">Dashboard</a></li>
+    <li><a class="active" href="{% url "dashboard:stats" %}">Stats</a></li>
+    <li><a href="{% url "dashboard:project-list" %}">Project List</a></li>
+</ul>
+
+<div class="main">
+    <h1>Overall statistics</h1>
+    <p>List with printer states</p>
+
+    <ul>
+    {% for state in object_list %}
+        <li>
+            On {{ state.created_at.date }}: {{ state.state }}
+            (<a href="{% url "dashboard:project-detail" state.project_id %}">Project {{ state.project_id }}</a>)
+        </li>
+    {% empty %}
+        <li>No printer states yet.</li>
+    {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}

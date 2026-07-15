@@ -1,0 +1,32 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+
+<ul id="navigation-bar">
+    <li><a href="{% url "dashboard:dashboard" %}">Dashboard</a></li>
+    <li><a href="{% url "dashboard:stats" %}">Stats</a></li>
+    <li><a href="{% url "dashboard:project-list" %}">Project List</a></li>
+    <li><a class="active" href="{% url "dashboard:project-detail" project.id %}">
+        Project ID {{ project.id }}
+    </a></li>
+</ul>
+
+<div class = "main">
+
+    <h1>Project Details</h1>
+    {% if project %}
+        <p>You are viewing Project {{ project.id }}</p>
+        <h2>{{ project.project_name }}</h2>
+        <p>created on {{ project.created_at.date }} and last updated on {{ project.updated_at.date }}</p>
+        <p>Status: {{ project.status }}</p>
+        <p>Project description: {{ project.project_description }}</p>
+        <p>Project owner: {{ project.owner_id }}</p>
+    {% else %}
+        <p>This project is not defined. Did you request the correct ID?</p>
+    {% endif %}
+
+    <br>
+    <p><a href="{% url "dashboard:project-list" %}">Back</a> to the list of projects.</p>
+</div>
+
+{% endblock %}

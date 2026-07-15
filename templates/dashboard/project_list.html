@@ -1,0 +1,55 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+
+<ul id="navigation-bar">
+    <li><a href="{% url "dashboard:dashboard" %}">Dashboard</a></li>
+    <li><a href="{% url "dashboard:stats" %}">Stats</a></li>
+    <li><a class="active" href="{% url "dashboard:project-list" %}">Project List</a></li>
+</ul>
+
+<div class = "main">
+    <h1>Project list</h1>
+    <h3>Printing</h3>
+    <ul>
+    {% for project in project_list %}
+        {%  if project.status == 30 %}
+        <li>
+            <a href="{% url "dashboard:project-detail" project.id %}">Project {{ project.id }}</a>:
+            {{ project.project_name }}
+            (Owner: {{ project.owner_id }}, created at {{ project.created_at.date }})
+        </li>
+        {% endif %}
+    {% empty %}
+        <li>No projects yet.</li>
+    {% endfor %}
+    </ul>
+
+    <h3>Not printed</h3>
+    <ul>
+    {% for project in project_list %}
+        {% if project.status != 30 and project.status != 40 %}
+        <li>
+            <a href="{% url "dashboard:project-detail" project.id %}">Project {{ project.id }}</a>:
+            {{ project.project_name }}
+            (Owner: {{ project.owner_id }}, created at {{ project.created_at.date }})
+        </li>
+        {% endif %}
+    {% endfor %}
+    </ul>
+
+    <h3>Done</h3>
+    <ul>
+    {% for project in project_list %}
+        {%  if project.status == 40 %}
+        <li>
+            <a href="{% url "dashboard:project-detail" project.id %}">Project {{ project.id }}</a>:
+            {{ project.project_name }}
+            (Owner: {{ project.owner_id }}, created at {{ project.created_at.date }})
+        </li>
+        {% endif %}
+    {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}

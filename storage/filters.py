@@ -1,3 +1,5 @@
+from typing import Type
+
 import django_filters
 
 from storage.models import PrinterStatus
@@ -12,5 +14,5 @@ class PrinterStatusFilter(django_filters.FilterSet):
     """Extend created_at filter to filter by year"""
 
     class Meta:
-        model = PrinterStatus
+        model: Type[PrinterStatus] = PrinterStatus
         fields = ("created_at", "state")

@@ -31,7 +31,7 @@ class Project(models.Model):
     is_created_manually = models.BooleanField(default=True)  # manually or using API
     status = models.IntegerField(choices=StatusChoices, default=StatusChoices.UNKNOWN)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.project_name} from User ID {self.owner_id}"
 
 
@@ -54,5 +54,5 @@ class PrinterStatus(models.Model):
     fan_speed_aux = models.IntegerField(null=True, validators=[MaxValueValidator(255), MinValueValidator(0)])
     chamber_image = models.ImageField(upload_to="storage/chamber-images/", null=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.state} at {self.created_at}"

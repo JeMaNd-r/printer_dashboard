@@ -13,14 +13,14 @@ class UserManager(BaseUserManager):
         user.save()
         return user
 
-    def create_superuser(self, email, **extra_fields):
+    def create_superuser(self, email, **extra_fields) -> "User":
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)
 
-        if extra_fields.get("is_staff") is not True:
+        if not extra_fields.get("is_staff"):
             raise ValueError("Superuser must have is_staff=True.")
-        if extra_fields.get("is_superuser") is not True:
+        if not extra_fields.get("is_superuser"):
             raise ValueError("Superuser must have is_superuser=True.")
         return self.create_user(email, **extra_fields)
 
@@ -42,8 +42,8 @@ class User(AbstractUser):
 
         ordering = ["email"]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"User({self.email})"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.email

@@ -15,7 +15,6 @@ dependencies = [
     "django-environ>=0.14.0",
     "django-extensions>=4.1",
     "psycopg[binary]>=3.3.4",
-    "whitenoise>=6.12.0",
     "factory-boy>=3.3.3",
 ]
 
@@ -25,4 +24,5 @@ dev = [
 ]
 production = [
     "gunicorn>=26.0.0",
+    "whitenoise>=6.12.0",
 ]

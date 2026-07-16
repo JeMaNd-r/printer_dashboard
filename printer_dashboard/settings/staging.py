@@ -9,13 +9,11 @@ ALLOWED_HOSTS = [".v2.singular-it-test.de"]
 
 CSRF_TRUSTED_ORIGINS = ["https://*.v2.singular-it-test.de"]
 
-
 # CORS
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://.*\.v2\.singular-it-test\.de$",
 ]
-
 
 # SECURITY
 
@@ -45,3 +43,12 @@ SECURE_HSTS_PRELOAD = True
 
 # https://docs.djangoproject.com/en/dev/ref/middleware/#x-content-type-options-nosniff
 SECURE_CONTENT_TYPE_NOSNIFF = True
+
+STORAGES["staticfiles"] = {
+    "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+}
+
+MIDDLEWARE.insert(
+    MIDDLEWARE.index("django.middleware.security.SecurityMiddleware") + 1,
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+)

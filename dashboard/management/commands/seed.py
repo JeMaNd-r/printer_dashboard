@@ -12,7 +12,11 @@ class Command(BaseCommand):
         self.stdout.write("Done")
 
     def _run_seed(self):
-        """Seed database with printer statuses"""
+        """
+        Seed database with printer statuses, projects and users
+
+        :return: Nothing
+        """
         for i in range(1, 10):
             UserFactory()
             ProjectFactory()

@@ -8,6 +8,10 @@ from users.models import User
 
 
 class TestStorage(TestCase):
+    """
+    Test the storage methods
+    """
+
     def test_user_creation(self):
         """Check that the user model can be created successfully"""
         u = UserFactory(first_name="ABCD")
@@ -40,3 +44,6 @@ class TestStorage(TestCase):
         self.assertEqual(s.state, printer_state)
         self.assertEqual(s.project.id, Project.objects.first().id)
         self.assertEqual(s.__str__(), f"{printer_state} at {s.created_at}")
+
+
+# TODO: add tests for API

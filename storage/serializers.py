@@ -17,8 +17,22 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    owner = UserSerializer(read_only=True, default=None)
+    """
+    Serializer for Project model
 
+    Extends rest_framework.serializers.ModelSerializer to include owner and printer statuses
+    that are linked to the respective project ID.
+    In addition, provide URL linking to project detail view.
+    Note: because project and printer status are related, printer state urls are provided
+    and link to printer status detail view.
+    """
+
+    owner = UserSerializer(read_only=True, default=None)
+    printer_statuses = serializers.HyperlinkedRelatedField(
+        many=True,
+        read_only=True,
+        view_name="storage:printerstatus-detail",
+    )
     url = serializers.HyperlinkedIdentityField(
         view_name="storage:project-detail",
         lookup_field="pk",
@@ -36,10 +50,20 @@ class ProjectSerializer(serializers.ModelSerializer):
             "status",
             "is_created_manually",
             "owner",
+            "printer_statuses",
         ]
 
 
 class PrinterStatusSerializer(serializers.ModelSerializer):
+    """
+    Serializer for PrinterStatus model
+
+    Extends rest_framework.serializers.ModelSerializer to include project.
+    Project can be currently printing, finished or None.
+    Project url leads to project detail view.
+    In addition, provide URL linking to printer status detail view.
+    """
+
     project = serializers.HyperlinkedRelatedField(
         many=False,
         read_only=True,

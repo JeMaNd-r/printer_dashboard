@@ -5,6 +5,10 @@ from users.models import User
 
 
 class StatusChoices(models.IntegerChoices):
+    """
+    Define valid project status choices as Enum.
+    """
+
     UNKNOWN = 0
     NOT_SCHEDULED = 10
     IN_WAITING_LIST = 20
@@ -13,6 +17,12 @@ class StatusChoices(models.IntegerChoices):
 
 
 class Project(models.Model):
+    """
+    Printing projects provided to the 3D printer
+
+    Projects should get a name and be linked to a User.
+    """
+
     project_name = models.CharField(max_length=255)
     project_description = models.TextField(default="")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -26,6 +36,10 @@ class Project(models.Model):
 
 
 class PrinterStatus(models.Model):
+    """
+    Printer statuses retrieved from the 3D printer
+    """
+
     state = models.CharField(max_length=255)
     is_printing = models.BooleanField(default=False)
     project = models.ForeignKey(Project, null=True, on_delete=models.SET_NULL, related_name="printer_statuses")

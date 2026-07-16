@@ -35,6 +35,8 @@
             (Owner: {{ project.owner_id }}, created at {{ project.created_at.date }})
         </li>
         {% endif %}
+    {% empty %}
+        <li>No projects yet.</li>
     {% endfor %}
     </ul>
 
@@ -48,6 +50,8 @@
             (Owner: {{ project.owner_id }}, created at {{ project.created_at.date }})
         </li>
         {% endif %}
+    {% empty %}
+        <li>No projects yet.</li>
     {% endfor %}
     </ul>
 </div>

@@ -7,7 +7,7 @@ from storage.serializers import ProjectSerializer
 
 class ProjectViewSet(viewsets.ModelViewSet):
     """
-    Viewset for viewing and editing projects.
+    API endpoint that allows projects to be viewed or edited.
     """
 
     queryset = Project.objects.all()

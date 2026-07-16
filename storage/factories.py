@@ -18,6 +18,14 @@ PRINTER_STATE_CHOICES = [
 
 
 class UserFactory(factory.django.DjangoModelFactory):
+    """
+    Factory for User
+
+    Automatically creates User with firstname, lastname, email and password.
+
+    :return : User
+    """
+
     class Meta:
         model = User
 
@@ -28,6 +36,15 @@ class UserFactory(factory.django.DjangoModelFactory):
 
 
 class ProjectFactory(factory.django.DjangoModelFactory):
+    """
+    Factory for Project
+
+    Automatically creates Project with name, description and status.
+    Creation date is randomly generated. Owner is taken from UserFactory.
+
+    :return : Project
+    """
+
     project_name = factory.Faker("sentence")
     project_description = factory.Faker("text")
     owner = factory.SubFactory(UserFactory)
@@ -44,6 +61,14 @@ class ProjectFactory(factory.django.DjangoModelFactory):
 
 
 class PrinterStatusFactory(factory.django.DjangoModelFactory):
+    """
+    Factory for PrinterStatus
+
+    Automatically creates PrinterStatus with state, is_light_on and project.
+
+    :return : PrinterStatus
+    """
+
     class Meta:
         model = PrinterStatus
 

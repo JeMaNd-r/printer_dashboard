@@ -8,7 +8,7 @@ from storage.serializers import PrinterStatusSerializer
 
 class PrinterStatusViewSet(viewsets.ModelViewSet):
     """
-    Viewset for viewing and editing printer statuus.
+    API endpoint that allows printer states to be viewed or edited.
     """
 
     queryset = PrinterStatus.objects.all()

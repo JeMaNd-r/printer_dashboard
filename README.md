@@ -1,12 +1,15 @@
 # 3D Printer Dashboard (internal)
 
 
+Django application with browsable API and OpenAPI to request and view statistics of the 3D printer from BambuLab.
+
+
 ## Tech stack
 
 - Python 3.13
 - uv
 - PostgreSQL 17
-- Django
+- Django 6.0.7
 
 
 ## Get started locally

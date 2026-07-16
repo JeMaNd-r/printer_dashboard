@@ -12,14 +12,14 @@ class TestStorage(TestCase):
     Test the storage methods
     """
 
-    def test_user_creation(self):
+    def test_user_creation(self) -> None:
         """Check that the user model can be created successfully"""
         u = UserFactory(first_name="ABCD")
 
         self.assertEqual(u.first_name, "ABCD")
         self.assertQuerySetEqual(User.objects.order_by("id"), [u])
 
-    def test_project_creation(self):
+    def test_project_creation(self) -> None:
         """Check that the project model can be created successfully"""
         project_status = random.choice(StatusChoices.values)
         project_name = "This is the projects name"
@@ -35,7 +35,7 @@ class TestStorage(TestCase):
         p.save()
         self.assertTrue(update_date < p.updated_at)
 
-    def test_printerstatus_creation(self):
+    def test_printerstatus_creation(self) -> None:
         """Check that the printerstatus model can be created successfully"""
         printer_state = random.choice(PRINTER_STATE_CHOICES)
         s = PrinterStatusFactory(state=printer_state)

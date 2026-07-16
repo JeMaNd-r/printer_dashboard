@@ -1,4 +1,5 @@
 from datetime import UTC, datetime
+from typing import Type
 
 import factory
 import factory.fuzzy
@@ -6,7 +7,7 @@ from factory import post_generation
 
 from storage.models import PrinterStatus, Project, StatusChoices, User
 
-PRINTER_STATE_CHOICES = [
+PRINTER_STATE_CHOICES: list[str] = [
     "IDLE",
     "PREPARING",
     "RUNNING",
@@ -27,7 +28,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     """
 
     class Meta:
-        model = User
+        model: Type[User] = User
 
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")
@@ -52,10 +53,10 @@ class ProjectFactory(factory.django.DjangoModelFactory):
     status = factory.fuzzy.FuzzyChoice(StatusChoices.values)
 
     class Meta:
-        model = Project
+        model: Type[Project] = Project
 
     @post_generation
-    def post(self, create, extracted, **kwargs):
+    def post(self, create, extracted, **kwargs) -> None:
         self.created_at = factory.fuzzy.FuzzyDateTime(datetime(2020, 1, 2, tzinfo=UTC)).evaluate(2, None, {})
         self.save(update_fields=["created_at"])
 
@@ -70,7 +71,7 @@ class PrinterStatusFactory(factory.django.DjangoModelFactory):
     """
 
     class Meta:
-        model = PrinterStatus
+        model: Type[PrinterStatus] = PrinterStatus
 
     project = factory.SubFactory(ProjectFactory)
     state = factory.fuzzy.FuzzyChoice(PRINTER_STATE_CHOICES)

@@ -1,3 +1,5 @@
+from typing import Type
+
 from rest_framework import serializers
 
 from storage.models import PrinterStatus, Project
@@ -6,7 +8,7 @@ from users.models import User
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model: Type[User] = User
         fields = [
             "id",
             "email",
@@ -39,7 +41,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Project
+        model: Type[Project] = Project
         fields = [
             "url",
             "id",

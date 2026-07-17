@@ -182,3 +182,8 @@ SPECTACULAR_SETTINGS = {
         "rest_framework.permissions.IsAuthenticated",
     ],
 }
+
+# Printer API
+PRINTER_IP_ADDRESS = env.str("PRINTER_IP_ADDRESS", default=None)
+PRINTER_ACCESS_CODE = env.str("PRINTER_ACCESS_CODE", default=None)
+PRINTER_SERIAL = env.str("PRINTER_SERIAL", default=None)

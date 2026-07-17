@@ -16,6 +16,7 @@ dependencies = [
     "django-extensions>=4.1",
     "psycopg[binary]>=3.3.4",
     "factory-boy>=3.3.3",
+    "bambulabs-api>=2.6.6",
 ]
 
 [dependency-groups]

@@ -25,7 +25,12 @@ Django application with browsable API and OpenAPI to request and view statistics
    ```
 
 2. Create a database in your PostgreSQL instance
-3. Create a `.env` file according to the `.env.example` file
+3. Create a `.env` file according to the `.env.example` file. The connection details for the printer (`PRINTER_`) can be taken from the Printer display and BambuStudio:
+
+   * PRINTER_IP_ADDRESS: IP address of the printer from the Printer display: Settings (3rd symbol) → WLAN → IP
+   * PRINTER_ACCESS_CODE: Access code can be taken from the Printer display: Settings (3rd symbol) → WLAN → Access Code
+   * PRINTER_SERIAL: Serial can be seen in BambuStudio → Device tab → Model: Bambu Lab P1S → Serial
+
 4. Run the development server:
 
    ```bash
@@ -33,6 +38,7 @@ Django application with browsable API and OpenAPI to request and view statistics
    # or
    uv run manage.py runserver
    ```
+
 5. Install pre-commit hooks:
 
    ```bash

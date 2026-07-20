@@ -6,9 +6,9 @@ from core.models import PrinterStatus
 from core.serializers import PrinterStatusSerializer
 
 
-class PrinterStatusViewSet(viewsets.ModelViewSet):
+class PrinterStatusViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    API endpoint that allows printer states to be viewed or edited.
+    API endpoint that allows printer states to be viewed.
     """
 
     queryset = PrinterStatus.objects.all()

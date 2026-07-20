@@ -6,7 +6,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("storage", "0001_initial"),
+        ("core", "0001_initial"),
     ]
 
     operations = [
@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="printerstatus",
             name="chamber_image",
-            field=models.ImageField(null=True, upload_to="storage/chamber-images/"),
+            field=models.ImageField(null=True, upload_to="core/chamber-images/"),
         ),
         migrations.AlterField(
             model_name="printerstatus",
@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
                 related_name="printer_statuses",
-                to="storage.project",
+                to="core.project",
             ),
         ),
     ]

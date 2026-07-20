@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from storage.factories import PrinterStatusFactory, ProjectFactory, UserFactory
+from core.factories import PrinterStatusFactory, ProjectFactory, UserFactory
 
 
 class Command(BaseCommand):

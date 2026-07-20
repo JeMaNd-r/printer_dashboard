@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from storage.models import PrinterStatus, Project
+from core.models import PrinterStatus, Project
 
 
 @admin.register(Project)

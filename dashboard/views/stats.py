@@ -1,6 +1,6 @@
 from django.views import generic
 
-from storage.models import PrinterStatus
+from core.models import PrinterStatus
 
 
 class PrinterStatusListView(generic.ListView):

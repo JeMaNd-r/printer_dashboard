@@ -1,8 +1,8 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 
-from storage.models import Project
-from storage.serializers import ProjectSerializer
+from core.models import Project
+from core.serializers import ProjectSerializer
 
 
 class ProjectViewSet(viewsets.ModelViewSet):

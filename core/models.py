@@ -52,7 +52,7 @@ class PrinterStatus(models.Model):
     temperature_chamber = models.FloatField(null=True)
     fan_speed_chamber = models.IntegerField(null=True, validators=[MaxValueValidator(255), MinValueValidator(0)])
     fan_speed_aux = models.IntegerField(null=True, validators=[MaxValueValidator(255), MinValueValidator(0)])
-    chamber_image = models.ImageField(upload_to="storage/chamber-images/", null=True)
+    chamber_image = models.ImageField(upload_to="core/chamber-images/", null=True)
 
     def __str__(self) -> str:
         return f"{self.state} at {self.created_at}"

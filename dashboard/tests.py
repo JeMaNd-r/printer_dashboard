@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from storage.factories import PrinterStatusFactory, ProjectFactory
-from storage.models import PrinterStatus, Project
+from core.factories import PrinterStatusFactory, ProjectFactory
+from core.models import PrinterStatus, Project
 
 
 class TestProjectListView(TestCase):

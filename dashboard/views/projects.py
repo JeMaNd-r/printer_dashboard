@@ -1,6 +1,6 @@
 from django.views import generic
 
-from storage.models import Project
+from core.models import Project
 
 
 class ProjectListView(generic.ListView):

@@ -2,7 +2,7 @@ from typing import Type
 
 from rest_framework import serializers
 
-from storage.models import PrinterStatus, Project
+from core.models import PrinterStatus, Project
 from users.models import User
 
 
@@ -33,10 +33,10 @@ class ProjectSerializer(serializers.ModelSerializer):
     printer_statuses = serializers.HyperlinkedRelatedField(
         many=True,
         read_only=True,
-        view_name="storage:printerstatus-detail",
+        view_name="core:printerstatus-detail",
     )
     url = serializers.HyperlinkedIdentityField(
-        view_name="storage:project-detail",
+        view_name="core:project-detail",
         lookup_field="pk",
     )
 
@@ -69,11 +69,11 @@ class PrinterStatusSerializer(serializers.ModelSerializer):
     project = serializers.HyperlinkedRelatedField(
         many=False,
         read_only=True,
-        view_name="storage:project-detail",
+        view_name="core:project-detail",
     )
 
     url = serializers.HyperlinkedIdentityField(
-        view_name="storage:printerstatus-detail",
+        view_name="core:printerstatus-detail",
         lookup_field="pk",
     )
 

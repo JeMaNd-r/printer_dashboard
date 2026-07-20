@@ -76,7 +76,7 @@ class Migration(migrations.Migration):
                         ],
                     ),
                 ),
-                ("chamber_image", models.ImageField(null=True, upload_to="storage/images/%Y/%m/%d/")),
+                ("chamber_image", models.ImageField(null=True, upload_to="core/images/%Y/%m/%d/")),
                 (
                     "project",
                     models.ForeignKey(
@@ -84,7 +84,7 @@ class Migration(migrations.Migration):
                         null=True,
                         on_delete=django.db.models.deletion.SET_DEFAULT,
                         related_name="printer_statuses",
-                        to="storage.project",
+                        to="core.project",
                     ),
                 ),
             ],

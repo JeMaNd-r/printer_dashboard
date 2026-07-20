@@ -1,10 +1,10 @@
 from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
-from storage.views.projects import ProjectViewSet
-from storage.views.stats import PrinterStatusViewSet
+from core.views.projects import ProjectViewSet
+from core.views.stats import PrinterStatusViewSet
 
-app_name = "storage"
+app_name = "core"
 
 router = SimpleRouter()
 router.register(r"projects", ProjectViewSet)

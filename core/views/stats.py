@@ -1,9 +1,9 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 
-from storage.filters import PrinterStatusFilter
-from storage.models import PrinterStatus
-from storage.serializers import PrinterStatusSerializer
+from core.filters import PrinterStatusFilter
+from core.models import PrinterStatus
+from core.serializers import PrinterStatusSerializer
 
 
 class PrinterStatusViewSet(viewsets.ModelViewSet):

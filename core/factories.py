@@ -5,7 +5,7 @@ import factory
 import factory.fuzzy
 from factory import post_generation
 
-from storage.models import PrinterStatus, Project, StatusChoices, User
+from core.models import PrinterStatus, Project, StatusChoices, User
 
 PRINTER_STATE_CHOICES: list[str] = [
     "IDLE",

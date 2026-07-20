@@ -2,14 +2,14 @@ import random
 
 from django.test import TestCase
 
-from storage.factories import PRINTER_STATE_CHOICES, PrinterStatusFactory, ProjectFactory, UserFactory
-from storage.models import PrinterStatus, Project, StatusChoices
+from core.factories import PRINTER_STATE_CHOICES, PrinterStatusFactory, ProjectFactory, UserFactory
+from core.models import PrinterStatus, Project, StatusChoices
 from users.models import User
 
 
 class TestStorage(TestCase):
     """
-    Test the storage methods
+    Test the core methods
     """
 
     def test_user_creation(self) -> None:

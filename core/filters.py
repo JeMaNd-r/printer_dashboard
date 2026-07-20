@@ -2,7 +2,7 @@ from typing import Type
 
 import django_filters
 
-from storage.models import PrinterStatus
+from core.models import PrinterStatus
 
 
 class PrinterStatusFilter(django_filters.FilterSet):

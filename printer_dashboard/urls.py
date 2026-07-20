@@ -30,7 +30,7 @@ urlpatterns = [
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api-auth/", include("rest_framework.urls")),
     path("dashboard/", include("dashboard.urls")),
-    path("storage/", include("storage.urls")),
+    path("core/", include("core.urls")),
 ]
 
 if settings.DEBUG and "debug_toolbar" in settings.INSTALLED_APPS:

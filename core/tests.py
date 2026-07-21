@@ -38,10 +38,10 @@ class TestStorage(TestCase):
     def test_printerstatus_creation(self) -> None:
         """Check that the printerstatus model can be created successfully"""
         printer_state = random.choice(PRINTER_STATE_CHOICES)
-        s = PrinterStatusFactory(state=printer_state)
+        s = PrinterStatusFactory(printer_state=printer_state)
 
         self.assertQuerySetEqual(PrinterStatus.objects.order_by("id"), [s])
-        self.assertEqual(s.state, printer_state)
+        self.assertEqual(s.printer_state, printer_state)
         self.assertEqual(s.project.id, Project.objects.first().id)
         self.assertEqual(s.__str__(), f"{printer_state} at {s.created_at}")
 

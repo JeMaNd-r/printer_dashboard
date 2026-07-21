@@ -5,7 +5,7 @@ django-test:
   extends:
     - .size:medium
   services:
-    - postgres:17
+    - postgres:18@sha256:32ca0af8e77bfb8c6610c488e4691f83f972a3e9e64d3b02facf3ab111ad5500
   variables:
     DJANGO_SETTINGS_MODULE: "printer_dashboard.settings.test"
     POSTGRES_HOST: "postgres"

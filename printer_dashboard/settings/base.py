@@ -5,6 +5,7 @@ Django settings for printer_dashboard project.
 import sys
 from pathlib import Path
 
+from django.utils.csp import CSP
 from environ import environ
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -40,6 +41,13 @@ SECRET_KEY = env.str("DJANGO_SECRET_KEY", "django-insecure-dboUjVsOQgAXUwyXFclz"
 X_FRAME_OPTIONS = "SAMEORIGIN"
 SILENCED_SYSTEM_CHECKS = ["security.W019"]
 
+## CSP
+SECURE_CSP = {
+    "default-src": [CSP.SELF],
+}
+SECURE_CSP_REPORT_ONLY = {
+    "default-src": [CSP.SELF],
+}
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -50,6 +58,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.csp.ContentSecurityPolicyMiddleware",
 ]
 
 # URL configuration

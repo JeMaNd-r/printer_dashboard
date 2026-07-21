@@ -17,7 +17,7 @@ deploy-check:
   stage: test
   interruptible: true
   allow_failure: true
-  image: orbisk/django-test:3.12
+  image: orbisk/django-test:3.13
   extends:
     - .size:medium
   variables:

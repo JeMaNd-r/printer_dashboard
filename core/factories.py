@@ -74,5 +74,5 @@ class PrinterStatusFactory(factory.django.DjangoModelFactory):
         model: Type[PrinterStatus] = PrinterStatus
 
     project = factory.SubFactory(ProjectFactory)
-    printer_state = factory.fuzzy.FuzzyChoice(PRINTER_STATE_CHOICES)
+    state = factory.fuzzy.FuzzyChoice(PRINTER_STATE_CHOICES)
     is_light_on = factory.fuzzy.FuzzyChoice([True, False])

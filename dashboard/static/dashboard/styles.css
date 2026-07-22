@@ -72,3 +72,42 @@ a:hover {
 a:visited {
     color: darkgreen;
 }
+
+
+table thead {
+    text-align: left;
+}
+
+table tr td {
+    padding-right: 8px;
+}
+
+#minecraft-button {
+    font-family: "Minecraft", sans-serif;
+    font-size: 2rem;
+    text-decoration: none;
+    text-align: center;
+    text-shadow: rgb(6, 77, 42) 0 .1em 0;
+    color: white;
+    background-color: rgb(0, 140, 69);
+    border: .07em solid rgb(40, 18, 18);
+    padding-left: .3em;
+    padding-right: .3em;
+    padding-bottom: .3em;
+    cursor: pointer;
+    border-radius: .1rem;
+    transition: bachground-color 0.2s;
+
+}
+
+#minecraft-button:hover {
+    background-color: rgb(10, 152, 80);
+}
+
+#minecraft-button:focus {
+    background-color: lightgrey;
+}
+
+#minecraft-button:visited {
+    background-color: grey;
+}

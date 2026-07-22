@@ -12,4 +12,12 @@ class ProjectAdmin(admin.ModelAdmin):
 @admin.register(PrinterStatus)
 class PrinterStatusAdmin(admin.ModelAdmin):
     date_hierarchy = "created_at"
-    list_display = ["id", "state", "is_printing", "is_light_on", "project_id", "print_percentage"]
+    list_display = [
+        "id",
+        "printer_state",
+        "print_status",
+        "is_printing",
+        "is_light_on",
+        "project_id",
+        "print_percentage",
+    ]

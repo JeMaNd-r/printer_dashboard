@@ -5,7 +5,7 @@ import factory
 import factory.fuzzy
 from factory import post_generation
 
-from core.models import PrinterStatus, Project, StatusChoices, User
+from core.models import PrinterStatus, Project, ProjectStatusChoices, User
 
 PRINTER_STATE_CHOICES: list[str] = [
     "IDLE",
@@ -50,7 +50,7 @@ class ProjectFactory(factory.django.DjangoModelFactory):
     project_description = factory.Faker("text")
     owner = factory.SubFactory(UserFactory)
     is_created_manually = factory.fuzzy.FuzzyChoice([True, False])
-    status = factory.fuzzy.FuzzyChoice(StatusChoices.values)
+    status = factory.fuzzy.FuzzyChoice(ProjectStatusChoices.values)
 
     class Meta:
         model: Type[Project] = Project
@@ -74,5 +74,5 @@ class PrinterStatusFactory(factory.django.DjangoModelFactory):
         model: Type[PrinterStatus] = PrinterStatus
 
     project = factory.SubFactory(ProjectFactory)
-    state = factory.fuzzy.FuzzyChoice(PRINTER_STATE_CHOICES)
+    printer_state = factory.fuzzy.FuzzyChoice(PRINTER_STATE_CHOICES)
     is_light_on = factory.fuzzy.FuzzyChoice([True, False])

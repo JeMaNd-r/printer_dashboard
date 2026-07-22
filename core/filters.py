@@ -15,4 +15,4 @@ class PrinterStatusFilter(django_filters.FilterSet):
 
     class Meta:
         model: Type[PrinterStatus] = PrinterStatus
-        fields = ("created_at", "state")
+        fields = ("created_at", "printer_state", "print_status")

@@ -82,7 +82,8 @@ class PrinterStatusSerializer(serializers.ModelSerializer):
         fields = [
             "url",
             "id",
-            "state",
+            "printer_state",
+            "print_status",
             "created_at",
             "is_printing",
             "is_light_on",

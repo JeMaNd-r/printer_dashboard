@@ -2,14 +2,15 @@ import random
 
 from django.test import TestCase
 
+from core import data_updater
 from core.factories import PRINTER_STATE_CHOICES, PrinterStatusFactory, ProjectFactory, UserFactory
-from core.models import PrinterStatus, Project, StatusChoices
+from core.models import PrinterStatus, PrinterStatusChoices, Project, ProjectStatusChoices
 from users.models import User
 
 
-class TestStorage(TestCase):
+class TestModels(TestCase):
     """
-    Test the core methods
+    Test the core models
     """
 
     def test_user_creation(self) -> None:
@@ -21,7 +22,7 @@ class TestStorage(TestCase):
 
     def test_project_creation(self) -> None:
         """Check that the project model can be created successfully"""
-        project_status = random.choice(StatusChoices.values)
+        project_status = random.choice(ProjectStatusChoices.values)
         project_name = "This is the projects name"
         p = ProjectFactory(project_name=project_name, status=project_status)
         update_date = p.updated_at
@@ -35,15 +36,50 @@ class TestStorage(TestCase):
         p.save()
         self.assertTrue(update_date < p.updated_at)
 
-    def test_printerstatus_creation(self) -> None:
-        """Check that the printerstatus model can be created successfully"""
+    def test_printer_status_creation(self) -> None:
+        """Check that the printer status model can be created successfully"""
         printer_state = random.choice(PRINTER_STATE_CHOICES)
-        s = PrinterStatusFactory(state=printer_state)
+        s = PrinterStatusFactory(printer_state=printer_state)
 
         self.assertQuerySetEqual(PrinterStatus.objects.order_by("id"), [s])
-        self.assertEqual(s.state, printer_state)
+        self.assertEqual(s.printer_state, printer_state)
         self.assertEqual(s.project.id, Project.objects.first().id)
         self.assertEqual(s.__str__(), f"{printer_state} at {s.created_at}")
+
+
+class TestDatabaseUpdates(TestCase):
+    """
+    Test the database update functionality
+    """
+
+    def test_add_project_when_printing(self):
+        """If new PrinterStatus is printing, add Project to database and link to current printer status"""
+
+        printer = PrinterStatus(printer_state=PrinterStatusChoices.RUNNING)
+        previous_no_project_id = printer.project_id
+
+        data_updater.check_for_new_project(current_state=printer)
+
+        project = Project.objects.first()
+
+        self.assertEqual(Project.objects.count(), 1)
+        self.assertEqual(printer.project, project)
+        self.assertNotEqual(previous_no_project_id, printer.project_id)
+
+    def test_take_previous_project(self):
+        """If current print same project, take project from previous printer status"""
+
+        PrinterStatus.objects.create(printer_state=PrinterStatusChoices.PREPARING)
+        printer2 = PrinterStatus(printer_state=PrinterStatusChoices.RUNNING)
+        previous_no_project_id = printer2.project
+
+        data_updater.check_for_new_project(printer2)
+        printer2.save()
+
+        self.assertEqual(PrinterStatus.objects.count(), 2)
+        self.assertEqual(Project.objects.count(), 1)
+        self.assertIsNotNone(printer2.project)
+        self.assertNotEqual(printer2.project, previous_no_project_id)
 
 
 # TODO: add tests for API

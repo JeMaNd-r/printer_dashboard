@@ -12,6 +12,18 @@
     <h1>3D Printer Dashboard</h1>
     <p>Dashboard content...</p>
 
+    <form action="{% url "dashboard:dashboard" %}" method = "post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type = "submit" name="update" id="minecraft-button">Update print state</button>
+        <button type = "submit" name="light-off">Turn light off</button>
+        <p>
+            Note: Updating the printer state will take a couple of seconds.
+            <br>
+            You will be redirected automatically to another page when successfully updated.
+        </p>
+    </form>
+
 </div>
 
 {% endblock %}

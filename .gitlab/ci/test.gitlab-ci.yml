@@ -1,7 +1,7 @@
 django-test:
   stage: test
   interruptible: true
-  image: orbisk/django-test:3.13
+  image: orbisk/django-test:3.13@sha256:392516113d44c62b44a0d5bf591386eafac1c27e618eeaadf959b91168376650
   extends:
     - .size:medium
   services:
@@ -17,7 +17,7 @@ deploy-check:
   stage: test
   interruptible: true
   allow_failure: true
-  image: orbisk/django-test:3.13
+  image: orbisk/django-test:3.13@sha256:392516113d44c62b44a0d5bf591386eafac1c27e618eeaadf959b91168376650
   extends:
     - .size:medium
   variables:

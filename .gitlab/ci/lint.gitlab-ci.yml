@@ -3,7 +3,7 @@ pre-commit:
   interruptible: true
   extends:
     - .size:medium
-  image: astral/uv:python3.13-bookworm
+  image: astral/uv:python3.13-bookworm@sha256:47965cdc9d53a515f68f78241161c901e70051ce428f12e791bd7fe19f6a631a
   variables:
     PRE_COMMIT_HOME: ${CI_PROJECT_DIR}/.cache/pre-commit
     UV_CACHE_DIR: .uv-cache

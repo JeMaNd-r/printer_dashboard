@@ -1,9 +1,9 @@
 from django import forms
 
-from core.models import PrinterStatus
+from core.models import PrinterData
 
 
-class PrinterStatusForm(forms.Form):
+class PrinterDataForm(forms.Form):
     """A form for displaying printer status."""
 
-    model = PrinterStatus
+    model = PrinterData

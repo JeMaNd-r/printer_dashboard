@@ -1,19 +1,19 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 
-from core.filters import PrinterStatusFilter
-from core.models import PrinterStatus
-from core.serializers import PrinterStatusSerializer
+from core.filters import PrinterDataFilter
+from core.models import PrinterData
+from core.serializers import PrinterDataSerializer
 
 
-class PrinterStatusViewSet(viewsets.ReadOnlyModelViewSet):
+class PrinterDataViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows printer states to be viewed.
     """
 
-    queryset = PrinterStatus.objects.all()
-    serializer_class = PrinterStatusSerializer
+    queryset = PrinterData.objects.all()
+    serializer_class = PrinterDataSerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
     search_fields = ["state"]
     ordering_fields = ["state", "project_id", "created_at"]
-    filterset_class = PrinterStatusFilter
+    filterset_class = PrinterDataFilter

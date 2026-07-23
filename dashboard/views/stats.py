@@ -1,10 +1,10 @@
 from django.views import generic
 
-from core.models import PrinterStatus
+from core.models import PrinterData
 
 
-class PrinterStatusListView(generic.ListView):
-    model = PrinterStatus
-    template_name = "dashboard/printerstatus_list.html"
+class PrinterDataListView(generic.ListView):
+    model = PrinterData
+    template_name = "dashboard/printerdata_list.html"
 
-    queryset = PrinterStatus.objects.order_by("-created_at")
+    queryset = PrinterData.objects.order_by("-created_at")

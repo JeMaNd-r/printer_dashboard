@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from core.factories import PrinterStatusFactory, ProjectFactory, UserFactory
+from core.factories import PrinterDataFactory, ProjectFactory, UserFactory
 
 
 class Command(BaseCommand):
@@ -20,4 +20,4 @@ class Command(BaseCommand):
         for i in range(1, 10):
             UserFactory()
             ProjectFactory()
-            PrinterStatusFactory()
+            PrinterDataFactory()

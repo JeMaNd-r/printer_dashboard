@@ -79,12 +79,15 @@ class PrinterBambuP1S:
 
         return {
             "printer_state": self.printer.get_state(),
-            "print_status": self.printer.get_current_state().value,  # note: also called GcodeState
+            "detailed_state": self.printer.get_current_state().value,  # note: also called GcodeState
             "wifi_signal_dbm": int(wifi_signal.replace("dBm", "")) if wifi_signal else None,
             "light_state": self.printer.get_light_state(),
-            "print_percentage": self.printer.get_percentage(),
-            "print_gcode_file": self.printer.gcode_file(),
-            "print_type": self.printer.print_type(),
+            "percentage": self.printer.get_percentage(),
+            "gcode_file_name": self.printer.gcode_file(),
+            "source_type": self.printer.print_type(),
+            "subtask_name": self.printer.subtask_name(),
+            "current_layer_number": self.printer.current_layer_num(),
+            "total_layers": self.printer.total_layer_num(),
             "temperature_bed": self.printer.get_bed_temperature(),
             "temperature_nozzle": self.printer.get_nozzle_temperature(),
             "temperature_chamber": self.printer.get_chamber_temperature(),

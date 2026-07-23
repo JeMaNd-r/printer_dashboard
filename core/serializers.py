@@ -2,7 +2,7 @@ from typing import Type
 
 from rest_framework import serializers
 
-from core.models import PrinterStatus, Project
+from core.models import PrinterData, Project
 from users.models import User
 
 
@@ -30,10 +30,10 @@ class ProjectSerializer(serializers.ModelSerializer):
     """
 
     owner = UserSerializer(read_only=True, default=None)
-    printer_statuses = serializers.HyperlinkedRelatedField(
+    printer_states = serializers.HyperlinkedRelatedField(
         many=True,
         read_only=True,
-        view_name="core:printerstatus-detail",
+        view_name="core:printerdata-detail",
     )
     url = serializers.HyperlinkedIdentityField(
         view_name="core:project-detail",
@@ -52,13 +52,13 @@ class ProjectSerializer(serializers.ModelSerializer):
             "status",
             "is_created_manually",
             "owner",
-            "printer_statuses",
+            "printer_states",
         ]
 
 
-class PrinterStatusSerializer(serializers.ModelSerializer):
+class PrinterDataSerializer(serializers.ModelSerializer):
     """
-    Serializer for PrinterStatus model
+    Serializer for PrinterData model
 
     Extends rest_framework.serializers.ModelSerializer to include project.
     Project can be currently printing, finished or None.
@@ -73,21 +73,20 @@ class PrinterStatusSerializer(serializers.ModelSerializer):
     )
 
     url = serializers.HyperlinkedIdentityField(
-        view_name="core:printerstatus-detail",
+        view_name="core:printerdata-detail",
         lookup_field="pk",
     )
 
     class Meta:
-        model = PrinterStatus
+        model = PrinterData
         fields = [
             "url",
             "id",
-            "printer_state",
-            "print_status",
+            "state",
+            "detailed_state",
             "created_at",
-            "is_printing",
             "is_light_on",
-            "print_percentage",
+            "percentage",
             "project",
             "temperature_nozzle",
         ]

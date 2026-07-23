@@ -1,5 +1,4 @@
 from bambulabs_api import PrintStatus
-from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from users.models import User
@@ -37,10 +36,10 @@ class Project(models.Model):
 
 
 # PrintState from bambulab_api contains None for UNKNOWN instead of integer, therefore re-define necessary.
-PRINTING_STATUS_CHOICES = [(m.value, m.name.title()) for m in PrintStatus if m.value is not None] + [(None, 40)]
+DETAILED_STATE_CHOICES = [(m.value, m.name.title()) for m in PrintStatus if m.value is not None] + [(None, 40)]
 
 
-class PrinterStatusChoices(models.IntegerChoices):
+class PrinterStateChoices(models.IntegerChoices):
     """
     Define valid printing status choices as Enum.
 
@@ -56,30 +55,37 @@ class PrinterStatusChoices(models.IntegerChoices):
     FAILED = 60
 
 
-class PrinterStatus(models.Model):
+class PrinterData(models.Model):
     """
     Printer statuses retrieved from the 3D printer
 
     Note: Printer state refers to the state of the printer while
-    print status refers to the current print (project).
+    detailed status refers to the current print (project).
     """
 
-    printer_state = models.CharField(choices=PrinterStatusChoices, default=PrinterStatusChoices.UNKNOWN)
-    print_status = models.IntegerField(choices=PRINTING_STATUS_CHOICES, default=None, null=True)
-    is_printing = models.BooleanField(default=False)
-    project = models.ForeignKey(Project, null=True, on_delete=models.SET_NULL, related_name="printer_statuses")
-    print_percentage = models.IntegerField(null=True)  # if "Unknown" or None returned by printer.: save as null
-    print_gcode_file = models.TextField(null=True)
-    print_type = models.CharField(max_length=255, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    state = models.CharField(choices=PrinterStateChoices, default=PrinterStateChoices.UNKNOWN)  # gcode state
+
+    # Project related data
+    detailed_state = models.IntegerField(choices=DETAILED_STATE_CHOICES, default=None, null=True)
+    percentage = models.IntegerField(null=True)  # if "Unknown" or None returned by printer.: save as null
+    gcode_file_name = models.CharField(max_length=255, null=True)
+    source_type = models.CharField(max_length=255, null=True)
+    subtask_name = models.CharField(max_length=255, null=True)  # could be same as gcode file name without extension
+    current_layer_number = models.IntegerField(null=True)
+    total_layers = models.IntegerField(null=True)
+
     is_light_on = models.BooleanField(default=False)
+
     wifi_signal_dbm = models.IntegerField(null=True)
     temperature_nozzle = models.FloatField(null=True)
     temperature_bed = models.FloatField(null=True)
     temperature_chamber = models.FloatField(null=True)
-    fan_speed_chamber = models.IntegerField(null=True, validators=[MaxValueValidator(255), MinValueValidator(0)])
-    fan_speed_aux = models.IntegerField(null=True, validators=[MaxValueValidator(255), MinValueValidator(0)])
+
     chamber_image = models.ImageField(upload_to="core/chamber-images/", null=True)
 
+    project = models.ForeignKey(Project, null=True, on_delete=models.SET_NULL, related_name="printer_states")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
     def __str__(self) -> str:
-        return f"{self.printer_state} at {self.created_at}"
+        return f"{self.state} at {self.created_at}"

@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from core.factories import PrinterStatusFactory, ProjectFactory
-from core.models import PrinterStatus, Project
+from core.factories import PrinterDataFactory, ProjectFactory
+from core.models import PrinterData, Project
 
 
 class TestProjectListView(TestCase):
@@ -57,7 +57,7 @@ class TestProjectDetailView(TestCase):
         self.assertEqual(r1.context["project"], p1)
 
 
-class TestPrinterStatusView(TestCase):
+class TestPrinterDataView(TestCase):
     """
     Test the printer status (list) view
     """
@@ -72,13 +72,13 @@ class TestPrinterStatusView(TestCase):
     def test_printer_status_list_view(self):
         """Check that the printer status list view works"""
 
-        p1 = PrinterStatusFactory()
-        p2 = PrinterStatusFactory()
+        p1 = PrinterDataFactory()
+        p2 = PrinterDataFactory()
 
         response = self.client.get(reverse("dashboard:stats"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(PrinterStatus.objects.count(), 2)
+        self.assertEqual(PrinterData.objects.count(), 2)
         self.assertQuerySetEqual(
             response.context["object_list"].order_by("id"),
             [p1, p2],

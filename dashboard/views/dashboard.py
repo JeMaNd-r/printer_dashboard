@@ -3,14 +3,14 @@ from django.urls import reverse
 from django.views.generic import FormView
 
 from core import data_updater
-from dashboard.forms import PrinterStatusForm
+from dashboard.forms import PrinterDataForm
 from printer_api import script
 
 
 class DashboardView(FormView):
     """A base view for displaying printer status with an "update" button."""
 
-    form_class = PrinterStatusForm
+    form_class = PrinterDataForm
     template_name = "dashboard/dashboard.html"
 
     def post(self, request, *args, **kwargs):

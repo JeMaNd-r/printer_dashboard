@@ -29,11 +29,12 @@ class DatabaseUpdater:
         print("Printer status didn't change from previous state. No save needed.")
         return
 
+    def run(self): ...  # TODO
+
     PRINTER_PRINTING_STATES = [
         PrinterStateChoices.PREPARING,
         PrinterStateChoices.RUNNING,
         PrinterStateChoices.PAUSED,
-        PrinterStateChoices.FAILED,
     ]
 
     def create_new_project(self, is_gcode_unique: bool = False) -> "Project":
@@ -78,7 +79,6 @@ class DatabaseUpdater:
 
         :param with_image: Boolean value to indicate if image should be requested and saved or not
 
-        :return: None
         """
 
         image = None
@@ -126,22 +126,39 @@ class DatabaseUpdater:
         :return: None
         """
 
-        # If current state unknown, return current state without database or state changes
-        if self.printer_data.state == PrinterStateChoices.UNKNOWN:
+        # If no previous printer state exists, ADD NEW project
+        if PrinterData.objects.count() == 0:
+            if self.printer_data.state in self.PRINTER_PRINTING_STATES:
+                self.printer_data.project = self.create_new_project(is_gcode_unique=True)
+
             return
 
-        # If current state is not one of printing states, return current state without changes
-        if self.printer_data.state not in self.PRINTER_PRINTING_STATES:
-            return
-
-        # Check if latest printer state in database was one of printing states.
         latest_stored_state = PrinterData.objects.order_by("-created_at").first()
 
-        if latest_stored_state is None:
-            self.printer_data.project = self.create_new_project(is_gcode_unique=True)
+        # If current state is not printing, check if project update is needed
+        if self.printer_data.state not in self.PRINTER_PRINTING_STATES:
+            # If latest state was printing but current is not, update project status
+            if latest_stored_state.state in self.PRINTER_PRINTING_STATES:
+                print("Updating project status...")
 
-        # -> If last printer state was not printing, ADD NEW project.
-        elif latest_stored_state.state not in self.PRINTER_PRINTING_STATES:
+                # If current status FAILED, change project status to UNKNOWN
+                if self.printer_data.state == PrinterStateChoices.FAILED:
+                    self.printer_data.project = latest_stored_state.project
+
+                    new_project_status = ProjectStatusChoices.UNKNOWN
+                    print("WARNING: Printer status FAILED.")
+                    print(f"Project status {latest_stored_state.project_id} is set to UNKNOWN")
+
+                # If not FAILED, change project status to DONE
+                else:
+                    new_project_status = ProjectStatusChoices.DONE
+
+                Project.objects.filter(id=self.printer_data.project_id).update(status=new_project_status)
+
+            return
+
+        # If current is printing and last printer state was not printing, ADD NEW project.
+        if latest_stored_state.state not in self.PRINTER_PRINTING_STATES:
             self.printer_data.project = self.create_new_project(is_gcode_unique=True)
 
         # If last printer state was printing, check if last state has same gcode file.
@@ -151,20 +168,15 @@ class DatabaseUpdater:
 
         # If same gcode file, check if last state percentage is higher than current.
         # -> If current state percentage is lower than previous, ADD NEW project.
-        elif latest_stored_state.percentage > self.printer_data.percentage:
-            self.printer_data.project = self.create_new_project(is_gcode_unique=False)
+        elif latest_stored_state.percentage == self.printer_data.percentage:
+            self.printer_data.project = latest_stored_state.project
+            return
 
-        # else: don't save a new project but update with the latest project ID
-        else:
+        elif latest_stored_state.percentage is None or self.printer_data.percentage is None:
             self.printer_data.project = latest_stored_state.project
 
-            # if not printing but last state was, update project
-            if (
-                self.printer_data.state not in self.PRINTER_PRINTING_STATES
-                and latest_stored_state.state in self.PRINTER_PRINTING_STATES
-            ):
-                print("Updating project status...")
-                Project.objects.filter(id=self.printer_data.project_id).update(status=ProjectStatusChoices.DONE)
+        elif latest_stored_state.percentage > self.printer_data.percentage:
+            self.printer_data.project = self.create_new_project(is_gcode_unique=False)
 
         return
 
@@ -176,7 +188,13 @@ class DatabaseUpdater:
 
         :return: True or False
         """
+
+        if PrinterData.objects.count() == 0:
+            print("No previous printer data available.")
+            return True
+
         latest_stored_state = PrinterData.objects.order_by("-created_at").first()
+
         values_latest_stored_state = {
             "state": latest_stored_state.state,
             "detailed_state": latest_stored_state.detailed_state,
@@ -195,8 +213,9 @@ class DatabaseUpdater:
             "is_light_on": self.printer_data.is_light_on,
         }
 
-        print(values_printer_data)
-
         if values_printer_data == values_latest_stored_state:
+            print("Previous printer data same as current ones...")
             return False
+
+        print("Previous printer data different from current one...")
         return True

@@ -12,8 +12,9 @@ django-test:
     POSTGRES_PORT: "5432"
   script:
     - uv run coverage run manage.py test
+    - uv run coverage report
     - uv run coverage xml
-  coverage: '/TOTAL.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
+  coverage: '/TOTAL.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?)\%$/'
   artifacts:
     reports:
       coverage_report:

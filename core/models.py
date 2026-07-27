@@ -1,5 +1,6 @@
 from bambulabs_api import PrintStatus
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from users.models import User
 
@@ -46,13 +47,13 @@ class PrinterStateChoices(models.IntegerChoices):
     GcodeState Enum from bambulab_api contains str, not int. Therefore, define Enum with values instead.
     """
 
-    IDLE = 0
-    PREPARING = 10
-    RUNNING = 20
-    PAUSED = 30
-    FINISHED = 40
-    UNKNOWN = 50
-    FAILED = 60
+    IDLE = 0, _("Idle")
+    PREPARING = 10, _("Preparing")
+    RUNNING = 20, _("Running")
+    PAUSED = 30, _("Paused")
+    FINISHED = 40, _("Finished")
+    UNKNOWN = 50, _("Unknown")
+    FAILED = 60, _("Failed")
 
 
 class PrinterData(models.Model):
@@ -63,7 +64,7 @@ class PrinterData(models.Model):
     detailed status refers to the current print (project).
     """
 
-    state = models.CharField(choices=PrinterStateChoices, default=PrinterStateChoices.UNKNOWN)  # gcode state
+    state = models.IntegerField(choices=PrinterStateChoices, default=PrinterStateChoices.UNKNOWN)  # gcode state
 
     # Project related data
     detailed_state = models.IntegerField(choices=DETAILED_STATE_CHOICES, default=None, null=True)

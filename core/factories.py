@@ -5,17 +5,7 @@ import factory
 import factory.fuzzy
 from factory import post_generation
 
-from core.models import PrinterData, Project, ProjectStatusChoices, User
-
-PRINTER_STATE_CHOICES: list[str] = [
-    "IDLE",
-    "PREPARING",
-    "RUNNING",
-    "PAUSED",
-    "FINISHED",
-    "UNKNOWN",
-    "FAILED",
-]
+from core.models import PrinterData, PrinterStateChoices, Project, ProjectStatusChoices, User
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -74,5 +64,5 @@ class PrinterDataFactory(factory.django.DjangoModelFactory):
         model: Type[PrinterData] = PrinterData
 
     project = factory.SubFactory(ProjectFactory)
-    state = factory.fuzzy.FuzzyChoice(PRINTER_STATE_CHOICES)
+    state = factory.fuzzy.FuzzyChoice(PrinterStateChoices.values)
     is_light_on = factory.fuzzy.FuzzyChoice([True, False])

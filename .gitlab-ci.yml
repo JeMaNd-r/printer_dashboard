@@ -6,7 +6,9 @@ stages:
 include:
   - local: .gitlab/ci/*.gitlab-ci.yml
   - component: singular-code.de/singularit/ci-components/utilities/size/all@1.2.0
-  - component: $CI_SERVER_FQDN/singularit/ci-components/security/dependency-audit/sbom@0.3.6
+  - component: $CI_SERVER_FQDN/singularit/ci-components/security/dependency-audit/sbom@0.4.0
+    inputs:
+      create-badge: true
 
 variables:
   POSTGRES_HOST_AUTH_METHOD: trust

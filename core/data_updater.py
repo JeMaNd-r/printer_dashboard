@@ -1,4 +1,6 @@
-from typing import Self
+from typing import Any, Optional, Self
+
+from PIL import Image
 
 from core.models import PrinterData, PrinterStateChoices, Project, ProjectStatusChoices
 from printer_api.api import PrinterBambuP1S
@@ -31,7 +33,7 @@ class DatabaseUpdater:
 
     def run(self): ...  # TODO
 
-    PRINTER_PRINTING_STATES = [
+    PRINTER_PRINTING_STATES: list = [
         PrinterStateChoices.PREPARING,
         PrinterStateChoices.RUNNING,
         PrinterStateChoices.PAUSED,
@@ -46,7 +48,7 @@ class DatabaseUpdater:
 
         print("Creating new project...")
         # Define project status based on printer state
-        state_mapping = {
+        state_mapping: dict = {
             PrinterStateChoices.IDLE: ProjectStatusChoices.UNKNOWN,
             PrinterStateChoices.PREPARING: ProjectStatusChoices.PRINTING,
             PrinterStateChoices.RUNNING: ProjectStatusChoices.PRINTING,
@@ -56,16 +58,16 @@ class DatabaseUpdater:
             PrinterStateChoices.FAILED: ProjectStatusChoices.UNKNOWN,
         }
 
-        project_status = state_mapping.get(self.printer_data.state)
+        project_status: Optional[int] = state_mapping.get(self.printer_data.state)
 
         # Define project name
-        project_name = f"Gcode file {self.printer_data.gcode_file_name}"
+        project_name: str = f"Gcode file {self.printer_data.gcode_file_name}"
 
         if len(project_name) < 14:
-            project_name = f"Unknown project on {self.printer_data.created_at}"
+            project_name: str = f"Unknown project on {self.printer_data.created_at}"
 
         elif not is_gcode_unique:
-            project_name = f"{project_name} on {self.printer_data.created_at}"
+            project_name: str = f"{project_name} on {self.printer_data.created_at}"
 
         return Project.objects.create(project_name=project_name, is_created_manually=False, status=project_status)
 
@@ -81,19 +83,19 @@ class DatabaseUpdater:
 
         """
 
-        image = None
+        image: Optional[Image.Image] = None
 
         with PrinterBambuP1S() as printer:
-            printer_data = printer.get_all_infos()
+            printer_data: dict = printer.get_all_infos()
             if with_image:
-                image = printer.get_camera_image()
+                image: Image.Image = printer.get_camera_image()
 
         # transform GCodeState value for printer state to str
-        printer_data["state"] = printer_data["state"].value
+        printer_data["state"]: int = printer_data["state"].value
 
-        light_state = printer_data.pop("light_state")
+        light_state: Optional[str] = printer_data.pop("light_state")
 
-        p = PrinterData(**printer_data)
+        p: PrinterData = PrinterData(**printer_data)
 
         p.is_light_on = True if light_state == "on" else False
 
@@ -133,7 +135,7 @@ class DatabaseUpdater:
 
             return
 
-        latest_stored_state = PrinterData.objects.order_by("-created_at").first()
+        latest_stored_state: PrinterData = PrinterData.objects.order_by("-created_at").first()
 
         # If current state is not printing, check if project update is needed
         if self.printer_data.state not in self.PRINTER_PRINTING_STATES:
@@ -193,7 +195,7 @@ class DatabaseUpdater:
             print("No previous printer data available.")
             return True
 
-        latest_stored_state = PrinterData.objects.order_by("-created_at").first()
+        latest_stored_state: PrinterData = PrinterData.objects.order_by("-created_at").first()
 
         values_latest_stored_state = {
             "state": latest_stored_state.state,
@@ -204,7 +206,7 @@ class DatabaseUpdater:
             "is_light_on": latest_stored_state.is_light_on,
         }
 
-        values_printer_data = {
+        values_printer_data: dict[str, Any] = {
             "state": self.printer_data.state,
             "detailed_state": self.printer_data.detailed_state,
             "gcode_file_name": self.printer_data.gcode_file_name,

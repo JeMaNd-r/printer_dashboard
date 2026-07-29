@@ -1,7 +1,7 @@
 django-test:
   stage: test
   interruptible: true
-  image: orbisk/django-test:3.13@sha256:acc393b5e343032c49e73f027124cb84343a1040ea46926487ee20ed3e47a2a7
+  image: orbisk/django-test:3.13@sha256:5edf8883da9a1f474df7463c5d574b497235a2292e4fd52a8d09e98ef779874b
   extends:
     - .size:medium
   services:
@@ -25,7 +25,7 @@ deploy-check:
   stage: test
   interruptible: true
   allow_failure: true
-  image: orbisk/django-test:3.13@sha256:acc393b5e343032c49e73f027124cb84343a1040ea46926487ee20ed3e47a2a7
+  image: orbisk/django-test:3.13@sha256:5edf8883da9a1f474df7463c5d574b497235a2292e4fd52a8d09e98ef779874b
   extends:
     - .size:medium
   variables:

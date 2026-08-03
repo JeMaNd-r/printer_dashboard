@@ -1,6 +1,8 @@
 import random
-from unittest.mock import patch
+from typing import Any
+from unittest.mock import MagicMock, patch
 
+from bambulabs_api import GcodeState, PrintStatus
 from django.test import TestCase
 
 from core.data_updater import DatabaseUpdater
@@ -53,44 +55,102 @@ class TestDatabaseUpdates(TestCase):
     Test the database update functionality
     """
 
+    def _generate_fake_printer_state(self, **kwargs: Any) -> dict:
+        fake_printer_data = {
+            "state": GcodeState.UNKNOWN,
+            "detailed_state": None,
+            "wifi_signal_dbm": int("-12dBm".replace("dBm", "")),
+            "light_state": "on",
+            "percentage": None,
+            "gcode_file_name": "",
+            "source_type": None,
+            "subtask_name": None,
+            "current_layer_number": None,
+            "total_layers": None,
+            "temperature_bed": None,
+            "temperature_nozzle": None,
+            "temperature_chamber": None,
+        }
+
+        return {**fake_printer_data, **kwargs}
+
     @patch("core.data_updater.DatabaseUpdater.get_and_prepare_printer_data")
     def test_no_change_if_unknown_state(self, mock_get_and_prepare_printer_data):
         """If state is unknown, no change is made"""
 
         mock_get_and_prepare_printer_data.return_value = PrinterData(state=PrinterStateChoices.UNKNOWN)
+        DatabaseUpdater().run()
 
-        with DatabaseUpdater():
-            pass
+        p = PrinterData.objects.first()
 
         self.assertEqual(PrinterData.objects.count(), 1)
+        self.assertEqual(p.state, PrinterStateChoices.UNKNOWN)
         self.assertEqual(Project.objects.count(), 0)
-        self.assertIsNone(PrinterData.objects.first().project)
+        self.assertIsNone(p.project)
+
+    def test_prepare_printer_data_with_unknown_state(self):
+        """Check that printer data is correctly prepared from api dictionary output when state unknown"""
+
+        fake_printer_data_unknown = self._generate_fake_printer_state()
+
+        with patch("core.data_updater.PrinterBambuP1S") as mock_printer_class:
+            mock_instance = MagicMock()
+
+            mock_instance.get_all_infos.return_value = fake_printer_data_unknown
+            mock_printer_class.return_value.__enter__.return_value = mock_instance
+            mock_printer_class.return_value.__exit__.return_value = None
+
+            printer_state_unknown = DatabaseUpdater.get_and_prepare_printer_data(with_image=False)
+
+        self.assertEqual(PrinterData.objects.count(), 0)
+        self.assertEqual(printer_state_unknown.state, 50)
+        self.assertEqual(printer_state_unknown.detailed_state, 40)
+        self.assertEqual(printer_state_unknown.wifi_signal_dbm, -12)
+        self.assertTrue(printer_state_unknown.is_light_on)
+
+    def test_prepare_printer_data_with_given_state(self):
+        """Check that printer data is correctly prepared from api dictionary output when state provided"""
+
+        fake_printer_data_state = self._generate_fake_printer_state(
+            state=GcodeState.RUNNING,
+            detailed_state=PrintStatus.FILAMENT_LOADING.value,
+            gcode_file_name="123 layer X.mf3",
+        )
+
+        with patch("core.data_updater.PrinterBambuP1S") as mock_printer_class:
+            mock_instance = MagicMock()
+
+            # define second printer state
+            mock_instance.get_all_infos.return_value = fake_printer_data_state
+            mock_printer_class.return_value.__enter__.return_value = mock_instance
+            mock_printer_class.return_value.__exit__.return_value = None
+
+            printer_state_none = DatabaseUpdater.get_and_prepare_printer_data(with_image=False)
+
+        self.assertEqual(printer_state_none.state, 20)
+        self.assertEqual(printer_state_none.detailed_state, 24)
+        self.assertEqual(printer_state_none.gcode_file_name, "123 layer X.mf3")
 
     @patch("core.data_updater.DatabaseUpdater.get_and_prepare_printer_data")
     def test_save_state_if_different_before(self, mock_get_and_prepare_printer_data):
         """If current state is different from previously saved one, save current one."""
 
         mock_get_and_prepare_printer_data.return_value = PrinterData(state=PrinterStateChoices.PREPARING)
-        with DatabaseUpdater():
-            pass
+        DatabaseUpdater().run()
 
         mock_get_and_prepare_printer_data.return_value = PrinterData(state=PrinterStateChoices.RUNNING)
-        with DatabaseUpdater():
-            pass
+        DatabaseUpdater().run()
 
         mock_get_and_prepare_printer_data.return_value = PrinterData(
             state=PrinterStateChoices.RUNNING, gcode_file_name="Test file.3mf"
         )
-        with DatabaseUpdater():
-            pass
+        DatabaseUpdater().run()
 
         mock_get_and_prepare_printer_data.return_value = PrinterData(state=PrinterStateChoices.UNKNOWN)
-        with DatabaseUpdater():
-            pass
+        DatabaseUpdater().run()
 
         mock_get_and_prepare_printer_data.return_value = PrinterData(state=PrinterStateChoices.RUNNING)
-        with DatabaseUpdater():
-            pass
+        DatabaseUpdater().run()
 
         self.assertEqual(PrinterData.objects.count(), 5)
 
@@ -99,11 +159,8 @@ class TestDatabaseUpdates(TestCase):
         """If state is same as previous, new state is not saved"""
 
         mock_get_and_prepare_printer_data.return_value = PrinterData(state=PrinterStateChoices.RUNNING)
-        with DatabaseUpdater():
-            pass
-
-        with DatabaseUpdater():
-            pass
+        DatabaseUpdater().run()
+        DatabaseUpdater().run()
 
         self.assertEqual(PrinterData.objects.count(), 1)
 
@@ -112,8 +169,7 @@ class TestDatabaseUpdates(TestCase):
         """If new PrinterData is printing, add Project to database and link to current printer status"""
 
         mock_get_and_prepare_printer_data.return_value = PrinterData(state=PrinterStateChoices.RUNNING)
-        with DatabaseUpdater():
-            pass
+        DatabaseUpdater().run()
 
         printer_data = PrinterData.objects.first()
         project = Project.objects.first()
@@ -132,8 +188,7 @@ class TestDatabaseUpdates(TestCase):
         )
 
         mock_get_and_prepare_printer_data.return_value = PrinterData(state=PrinterStateChoices.RUNNING)
-        with DatabaseUpdater():
-            pass
+        DatabaseUpdater().run()
 
         latest_printer_data = PrinterData.objects.order_by("-created_at").first()
 
@@ -151,15 +206,13 @@ class TestDatabaseUpdates(TestCase):
 
         # running (+ project) -> failed -> running (+ project) > idle -> running (+ project)
         mock_get_and_prepare_printer_data.return_value = PrinterData(state=PrinterStateChoices.RUNNING)
-        with DatabaseUpdater():
-            pass
+        DatabaseUpdater().run()
 
         self.assertEqual(Project.objects.count(), 1)
         self.assertEqual(Project.objects.first().status, ProjectStatusChoices.PRINTING)
 
         mock_get_and_prepare_printer_data.return_value = PrinterData(state=PrinterStateChoices.FAILED)
-        with DatabaseUpdater():
-            pass
+        DatabaseUpdater().run()
 
         latest_printer_data = PrinterData.objects.order_by("-created_at").first()
 
@@ -170,22 +223,19 @@ class TestDatabaseUpdates(TestCase):
         self.assertEqual(Project.objects.first().status, ProjectStatusChoices.UNKNOWN)
 
         mock_get_and_prepare_printer_data.return_value = PrinterData(state=PrinterStateChoices.RUNNING)
-        with DatabaseUpdater():
-            pass
+        DatabaseUpdater().run()
 
         self.assertEqual(PrinterData.objects.count(), 3)
         self.assertEqual(Project.objects.count(), 2)
 
         mock_get_and_prepare_printer_data.return_value = PrinterData(state=PrinterStateChoices.IDLE)
-        with DatabaseUpdater():
-            pass
+        DatabaseUpdater().run()
 
         self.assertEqual(PrinterData.objects.count(), 4)
         self.assertEqual(Project.objects.count(), 2)
 
         mock_get_and_prepare_printer_data.return_value = PrinterData(state=PrinterStateChoices.RUNNING)
-        with DatabaseUpdater():
-            pass
+        DatabaseUpdater().run()
 
         self.assertEqual(PrinterData.objects.count(), 5)
         self.assertEqual(Project.objects.count(), 3)

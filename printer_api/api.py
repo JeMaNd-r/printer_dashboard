@@ -1,4 +1,5 @@
 import time
+from typing import Any, Optional
 
 import bambulabs_api
 from django.conf import settings
@@ -9,7 +10,7 @@ class PrinterBambuP1S:
     """Retrieve data from a specified printer"""
 
     def __init__(
-        self, ip_address: str | None = None, access_code: str | None = None, serial: str | None = None
+        self, ip_address: Optional[str] = None, access_code: Optional[str] = None, serial: Optional[str] = None
     ) -> None:
         """Connect to printer clients: MQTT, camera and FTP client"""
         ip_address = ip_address or settings.PRINTER_IP_ADDRESS
@@ -44,8 +45,8 @@ class PrinterBambuP1S:
 
         time.sleep(5)
 
-        attempts = 0
-        max_attempts = 5
+        attempts: int = 0
+        max_attempts: int = 5
 
         while attempts < max_attempts:
             attempts += 1
@@ -71,11 +72,11 @@ class PrinterBambuP1S:
         self.printer.disconnect()
         print("Successfully disconnected from printer.")
 
-    def get_all_infos(self) -> dict:
+    def get_all_infos(self) -> dict[str, Any]:
         """Retrieve data from printer."""
 
         # WiFi signal will be returned as string with dBm and can be empty
-        wifi_signal = self.printer.wifi_signal()
+        wifi_signal: Optional[str] = self.printer.wifi_signal()
 
         return {
             "printer_state": self.printer.get_state(),

@@ -37,7 +37,7 @@ class Project(models.Model):
 
 
 # PrintState from bambulab_api contains None for UNKNOWN instead of integer, therefore re-define necessary.
-DETAILED_STATE_CHOICES = [(m.value, m.name.title()) for m in PrintStatus if m.value is not None] + [(None, 40)]
+DETAILED_STATE_CHOICES = [(m.value, m.name.title()) for m in PrintStatus if m.value is not None] + [(40, "Unknown")]
 
 
 class PrinterStateChoices(models.IntegerChoices):

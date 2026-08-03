@@ -79,8 +79,8 @@ class PrinterBambuP1S:
         wifi_signal: Optional[str] = self.printer.wifi_signal()
 
         return {
-            "printer_state": self.printer.get_state(),
-            "detailed_state": self.printer.get_current_state().value,  # note: also called GcodeState
+            "state": self.printer.get_state(),  # also called GcodeState
+            "detailed_state": self.printer.get_current_state().value,  # also called PrintStatus
             "wifi_signal_dbm": int(wifi_signal.replace("dBm", "")) if wifi_signal else None,
             "light_state": self.printer.get_light_state(),
             "percentage": self.printer.get_percentage(),

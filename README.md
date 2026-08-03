@@ -8,7 +8,7 @@ Django application with browsable API and OpenAPI to request and view statistics
 
 - Python 3.13
 - uv
-- PostgreSQL 17
+- PostgreSQL 18
 - Django 6.0.7
 
 

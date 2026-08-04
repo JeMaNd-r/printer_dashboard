@@ -32,6 +32,8 @@ class Project(models.Model):
     is_created_manually = models.BooleanField(default=True)  # manually or using API
     status = models.IntegerField(choices=ProjectStatusChoices, default=ProjectStatusChoices.UNKNOWN)
 
+    image = models.ImageField(upload_to="core/projects/", null=True)
+
     def __str__(self) -> str:
         return f"{self.project_name} from User ID {self.owner_id}"
 

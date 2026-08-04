@@ -20,7 +20,7 @@
         <p>created on {{ project.created_at.date }} and last updated on {{ project.updated_at.date }}</p>
         {% if project.image %}
             <p>Image of last printing state:</p>
-            <img src = "{{ project.image.url }}" alt="Chamber image from last print" width="300">
+            <img src = "{{ project.image.url }}" alt="Chamber image from last print" height="300">
         {% else %}
             <p>No image available.</p>
         {% endif %}
@@ -32,7 +32,7 @@
             <p>{{ state }}</p>
             {% if state.chamber_image %}
                 <p>Chamber image:</p>
-                <img src = "{{ state.chamber_image.url }}" alt="img" width="100">
+                <img src = "{{ state.chamber_image.url }}" alt="img" height="100">
             {% else %}
                 <p>No chamber image available.</p>
             {% endif %}

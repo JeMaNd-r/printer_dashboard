@@ -1,8 +1,10 @@
 {% extends "dashboard/base.html" %}
+{% load static %}
 
 {% block content %}
 
-<ul id="navigation-bar">
+<ul id="navigation-bar" xmlns:dashboard="http://www.w3.org/1999/xhtml" xmlns:dashboard="http://www.w3.org/1999/xhtml"
+    xmlns:dashboard="http://www.w3.org/1999/xhtml">
     <li><a href="{% url "dashboard:dashboard" %}">Dashboard</a></li>
     <li><a href="{% url "dashboard:stats" %}">Stats</a></li>
     <li><a class="active" href="{% url "dashboard:project-list" %}">Project List</a></li>
@@ -15,6 +17,11 @@
     {% for project in project_list %}
         {%  if project.status == 30 %}
         <li>
+            {% if project.image %}
+                <img src = "{{ project.image.url }}" alt="Chamber image from last print" height="10">
+            {% else %}
+                <img src = "{% static 'dashboard/Printer_image.jpg' %}" alt="Chamber image" height="10">
+            {% endif %}
             <a href="{% url "dashboard:project-detail" project.id %}">Project {{ project.id }}</a>:
             {{ project.project_name }}
             (Owner: {{ project.owner_id }}, created at {{ project.created_at.date }})
@@ -30,6 +37,11 @@
     {% for project in project_list %}
         {% if project.status != 30 and project.status != 40 %}
         <li>
+            {% if project.image %}
+                <img src = "{{ project.image.url }}" alt="Chamber image from last print" height="10">
+            {% else %}
+                <img src = "{% static 'dashboard/Printer_image.jpg' %}" alt="Chamber image" height="10">
+            {% endif %}
             <a href="{% url "dashboard:project-detail" project.id %}">Project {{ project.id }}</a>:
             {{ project.project_name }}
             (Owner: {{ project.owner_id }}, created at {{ project.created_at.date }})
@@ -45,6 +57,11 @@
     {% for project in project_list %}
         {%  if project.status == 40 %}
         <li>
+            {% if project.image %}
+                <img src = "{{ project.image.url }}" alt="Chamber image from last print" height="10">
+            {% else %}
+                <img src = "{% static 'dashboard/Printer_image.jpg' %}" alt="Chamber image" height="10">
+            {% endif %}
             <a href="{% url "dashboard:project-detail" project.id %}">Project {{ project.id }}</a>:
             {{ project.project_name }}
             (Owner: {{ project.owner_id }}, created at {{ project.created_at.date }})

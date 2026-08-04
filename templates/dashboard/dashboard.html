@@ -17,12 +17,31 @@
         {{ form.as_p }}
         <button type = "submit" name="update" id="minecraft-button">Update print state</button>
         <button type = "submit" name="light-off">Turn light off</button>
+
+        <br>
+        <button type = "submit" {% if is_running_once %}disabled {% endif %} name="retrieve-printer-data-once">Retrieve printer data once</button>
+        <button type = "submit" {% if is_running_regularly %}disabled {% endif %} name="retrieve-printer-data-regularly">Schedule regular retrieval of printer data</button>
+        <button type = "submit" {% if not is_running_regularly %}disabled {% endif %} name="stop-retrieving-printer-data">Stop all scheduled retrievals of printer data</button>
+
         <p>
             Note: Updating the printer state will take a couple of seconds.
             <br>
             You will be redirected automatically to another page when successfully updated.
         </p>
     </form>
+
+    {% if is_running_once %}
+      <p>Database update running once.</p>
+    {% endif %}
+
+    {% if is_running_regularly %}
+      <p>Database update running regularly.</p>
+    {% endif %}
+
+    {% if not is_running_regularly %}
+      <p>Database updates stopped.</p>
+    {% endif %}
+
 
 </div>
 

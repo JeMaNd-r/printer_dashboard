@@ -57,7 +57,10 @@ class DatabaseUpdater:
                 image: Image.Image = printer.get_camera_image()
 
         # transform GCodeState value to model's Enum value
-        printer_data["state"]: int = PrinterStateChoices[printer_data["state"].name].value
+        if printer_data["state"] is not None and printer_data["state"] == "FINISH":
+            printer_data["state"]: int = 40
+        else:
+            printer_data["state"]: int = PrinterStateChoices[printer_data["state"].name].value
 
         if printer_data["detailed_state"] is None:
             printer_data["detailed_state"]: int = 40

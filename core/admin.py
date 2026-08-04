@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 
 from core.models import PrinterData, Project
 
@@ -19,6 +20,15 @@ class PrinterDataAdmin(admin.ModelAdmin):
         "is_light_on",
         "project_id",
         "percentage",
-        "chamber_image",
+        "image_display",
         "created_at",
     ]
+
+    @admin.display
+    def image_display(self, obj):
+        if obj.chamber_image:
+            return format_html(
+                "<img src='{}' height='20' />",
+                obj.chamber_image.url,
+            )
+        return None

@@ -6,7 +6,6 @@ from django.urls import reverse
 from django.views.generic import FormView
 from django_q.models import Schedule
 
-from core import data_updater
 from core.schedules import retrieve_printer_data_once, retrieve_printer_data_regularly, stop_retrieving_printer_data
 from dashboard.forms import PrinterDataForm
 from printer_api import script
@@ -24,15 +23,11 @@ class DashboardView(FormView):
         return {**data, "is_running_regularly": is_running_regularly}
 
     def post(self, request, *args, **kwargs):
-        if "update" in request.POST:
-            data_updater.get_and_save_to_db(with_image=False)
-            return HttpResponseRedirect(reverse("dashboard:stats"))
+        is_running_once: Optional[bool] = False
 
         if "light-off" in request.POST:
             script.switch_light(turn_on=False)
             return HttpResponseRedirect(reverse("dashboard:project-list"))
-
-        is_running_once: Optional[bool] = False
 
         if "retrieve-printer-data-once" in request.POST:
             retrieve_printer_data_once()

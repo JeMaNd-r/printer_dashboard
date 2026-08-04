@@ -15,11 +15,14 @@
     <form action="{% url "dashboard:dashboard" %}" method = "post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type = "submit" name="update" id="minecraft-button">Update print state</button>
+        <button type = "submit" {% if is_running_once %}disabled {% endif %}
+                name = "retrieve-printer-data-once"
+                id = "minecraft-button">
+            Retrieve printer data once
+        </button>
         <button type = "submit" name="light-off">Turn light off</button>
 
         <br>
-        <button type = "submit" {% if is_running_once %}disabled {% endif %} name="retrieve-printer-data-once">Retrieve printer data once</button>
         <button type = "submit" {% if is_running_regularly %}disabled {% endif %} name="retrieve-printer-data-regularly">Schedule regular retrieval of printer data</button>
         <button type = "submit" {% if not is_running_regularly %}disabled {% endif %} name="stop-retrieving-printer-data">Stop all scheduled retrievals of printer data</button>
 

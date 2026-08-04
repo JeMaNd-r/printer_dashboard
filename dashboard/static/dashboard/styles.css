@@ -82,6 +82,13 @@ table tr td {
     padding-right: 8px;
 }
 
+button {
+    margin-top: 8px;
+    margin-right: 8px;
+    background-color: darkseagreen;
+    cursor: pointer;
+}
+
 #minecraft-button {
     font-family: "Minecraft", sans-serif;
     font-size: 2rem;

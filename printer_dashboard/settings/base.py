@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_spectacular",
     "django_filters",
+    "django_q",
 ]
 
 # Security
@@ -202,3 +203,14 @@ SPECTACULAR_SETTINGS = {
 PRINTER_IP_ADDRESS = env.str("PRINTER_IP_ADDRESS", default=None)
 PRINTER_ACCESS_CODE = env.str("PRINTER_ACCESS_CODE", default=None)
 PRINTER_SERIAL = env.str("PRINTER_SERIAL", default=None)
+
+
+# Django Q2
+Q_CLUSTER = {
+    "name": "printer_dashboard",
+    "workers": 1,
+    "max_attempts": 1,
+    "retry": 25,
+    "timeout": 20,
+    "orm": "default",
+}

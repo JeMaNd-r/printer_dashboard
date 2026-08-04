@@ -51,6 +51,12 @@ Django application with browsable API and OpenAPI to request and view statistics
    uv run manage.py loaddata admin_interface_theme_singularIT.json
    ```
 
+7. Start QCluster
+
+   ```bash
+   uv run .\manage.py qcluster
+   ```
+
 ## GitLab CI/CD
 
 GitLab CI/CD is a continuous integration and continuous deployment service built into GitLab. It automates tasks like testing, building, and deploying code on every push or merge request. Pipelines are defined in a `.gitlab-ci.yml` file at the repository root. Additional configuration can be modularized in the `.gitlab` folder for better organization:

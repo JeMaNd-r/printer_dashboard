@@ -8,4 +8,5 @@ urlpatterns = [
     path("projects/", projects.ProjectListView.as_view(), name="project-list"),
     path("projects/<int:pk>/", projects.ProjectDetailView.as_view(), name="project-detail"),
     path("stats/", stats.PrinterDataListView.as_view(), name="stats"),
+    path("stats/<int:pk>/", stats.PrinterDataDetailView.as_view(), name="printerdata-detail"),
 ]

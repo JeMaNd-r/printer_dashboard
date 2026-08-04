@@ -16,6 +16,7 @@
     <table>
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Date</th>
                 <th>Time</th>
                 <th>State</th>
@@ -27,6 +28,7 @@
         <tbody>
             {% for state in object_list %}
                 <tr>
+                    <td><a href="{% url "dashboard:printerdata-detail" state.id %}">{{ state.id }}</a></td>
                     <td>{{ state.created_at.date }}</td>
                     <td>{{ state.created_at.time }}</td>
                     <td>{{ state.state }}</td>

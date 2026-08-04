@@ -10,8 +10,25 @@
 
 <div class="main">
     <h1>3D Printer Dashboard</h1>
-    <p>Dashboard content...</p>
 
+    {% if is_hot %}
+    <h2 style="background-color: yellow">⚠️ Attention! Printer could be hot. ⚠️</h2>
+    {% endif %}
+
+    <h3>Printer is {{ printer_data.state }} ({{ printer_data.detailed_state }}).</h3>
+    <p>Last updated on {{ printer_data.created_at.date }} at {{ printer_data.created_at.time }} (UTC)</p>
+    <p>💡 {% if is_light_on %}On{% else %}Off{% endif %}</p>
+
+    <p>🌡 Temperatures: </p>
+    <ul>
+        <li>Nozzle {{ printer_data.temperature_nozzle}}</li>
+        <li>Bed {{ printer_data.temperature_bed }}</li>
+        <li>Chamber {{ printer_data.temperature_chamber }}</li>
+    </ul>
+
+    <br>
+    <p>...Fancy graph...</p>
+    <br>
     <form action="{% url "dashboard:dashboard" %}" method = "post">
         {% csrf_token %}
         {{ form.as_p }}

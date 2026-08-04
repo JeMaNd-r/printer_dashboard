@@ -19,4 +19,6 @@ class PrinterDataAdmin(admin.ModelAdmin):
         "is_light_on",
         "project_id",
         "percentage",
+        "chamber_image",
+        "created_at",
     ]

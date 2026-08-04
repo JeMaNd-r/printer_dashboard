@@ -1,5 +1,7 @@
+from io import BytesIO
 from typing import Optional
 
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from PIL import Image
 
 from core.models import PrinterData, PrinterStateChoices, Project, ProjectStatusChoices
@@ -22,6 +24,7 @@ class DatabaseUpdater:
 
     def __init__(self, with_image: bool = False) -> None:
         self.with_image = with_image
+        self._chamber_image = None
 
     def run(self):
         printer_data = self.get_and_prepare_printer_data(with_image=self.with_image)
@@ -72,8 +75,11 @@ class DatabaseUpdater:
         p.is_light_on = True if light_state == "on" else False
 
         if with_image:
-            p.chamber_image = image
-
+            image_io = BytesIO()
+            image.save(image_io, format="JPEG")
+            p.chamber_image = InMemoryUploadedFile(
+                image_io, None, "image.jpg", "image/jpeg", len(image_io.getvalue()), None
+            )
         return p
 
     @staticmethod

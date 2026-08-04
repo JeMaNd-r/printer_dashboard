@@ -193,15 +193,16 @@ class DatabaseUpdater:
                 if printer_data.state == PrinterStateChoices.FAILED:
                     printer_data.project = latest_stored_state.project
 
-                    new_project_status = ProjectStatusChoices.UNKNOWN
+                    Project.objects.filter(id=printer_data.project_id).update(status=ProjectStatusChoices.UNKNOWN)
+
                     print("WARNING: Printer status FAILED.")
                     print(f"Project status {latest_stored_state.project_id} is set to UNKNOWN")
 
-                # If not FAILED, change project status to DONE
+                # If not FAILED, change project status to DONE and add image from current printing state
                 else:
-                    new_project_status = ProjectStatusChoices.DONE
-
-                Project.objects.filter(id=printer_data.project_id).update(status=new_project_status)
+                    Project.objects.filter(id=printer_data.project_id).update(
+                        status=ProjectStatusChoices.DONE, image=printer_data.chamber_image
+                    )
 
             return
 

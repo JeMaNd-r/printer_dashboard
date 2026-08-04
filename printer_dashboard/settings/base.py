@@ -42,19 +42,6 @@ X_FRAME_OPTIONS = "SAMEORIGIN"
 SILENCED_SYSTEM_CHECKS = ["security.W019"]
 
 ## CSP
-SECURE_CSP = {
-    "default-src": [CSP.SELF],
-    "font-src": [
-        CSP.SELF,
-        "https://fonts.cdnfonts.com/s/36662/MinecraftTen-VGORe.woff",
-    ],
-    "style-src": [
-        CSP.SELF,
-        "https://bootswatch.com/5/united/bootstrap.min.css",
-        "https://fonts.cdnfonts.com/css/minecraft-4",
-    ],
-}
-
 SECURE_CSP_REPORT_ONLY = {
     "default-src": [CSP.SELF],
     "font-src": [

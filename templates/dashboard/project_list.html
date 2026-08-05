@@ -59,8 +59,6 @@
         <li>
             {% if project.image %}
                 <img src = "{{ project.image.url }}" alt="Chamber image from last print" height="10">
-            {% else %}
-                <img src = "{% static 'dashboard/Printer_image.jpg' %}" alt="Chamber image" height="10">
             {% endif %}
             <a href="{% url "dashboard:project-detail" project.id %}">Project {{ project.id }}</a>:
             {{ project.project_name }}

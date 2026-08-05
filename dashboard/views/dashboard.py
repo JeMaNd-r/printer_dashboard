@@ -22,8 +22,10 @@ class DashboardView(FormView):
         data = super().get_context_data(**kwargs)
 
         is_running_regularly: Optional[bool] = Schedule.objects.filter(name="Printer data retrieval regularly").exists()
-        is_light_on: Optional[bool] = PrinterData.objects.order_by("created_at").last().is_light_on
-        printer_data: Optional[PrinterData] = PrinterData.objects.order_by("created_at").last()
+
+        latest_printer_data = PrinterData.objects.order_by("created_at").last()
+        is_light_on: Optional[bool] = latest_printer_data.is_light_on
+        printer_data: Optional[PrinterData] = latest_printer_data
         if (
             printer_data.temperature_chamber > 30
             or printer_data.temperature_bed > 30

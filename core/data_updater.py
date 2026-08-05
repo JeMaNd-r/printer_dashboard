@@ -24,7 +24,6 @@ class DatabaseUpdater:
 
     def __init__(self, with_image: bool = False) -> None:
         self.with_image = with_image
-        self._chamber_image = None
 
     def run(self):
         printer_data = self.get_and_prepare_printer_data(with_image=self.with_image)

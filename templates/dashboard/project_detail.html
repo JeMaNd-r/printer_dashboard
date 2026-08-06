@@ -18,9 +18,28 @@
         <p>You are viewing Project {{ project.id }}</p>
         <h2>{{ project.project_name }}</h2>
         <p>created on {{ project.created_at.date }} and last updated on {{ project.updated_at.date }}</p>
+        {% if project.image %}
+            <p>Image of last printing state:</p>
+            <img src = "{{ project.image.url }}" alt="Chamber image from last print" height="300">
+        {% else %}
+            <p>No image available.</p>
+        {% endif %}
         <p>Status: {{ project.status }}</p>
         <p>Project description: {{ project.project_description }}</p>
         <p>Project owner: {{ project.owner_id }}</p>
+        <h3>Printer states associated with this project:</h3>
+        {% for state in project.printer_states.all %}
+            <p>{{ state }}</p>
+            {% if state.chamber_image %}
+                <p>Chamber image:</p>
+                <img src = "{{ state.chamber_image.url }}" alt="img" height="100">
+            {% else %}
+                <p>No chamber image available.</p>
+            {% endif %}
+        {% empty %}
+            <p>No printer states available.</p>
+        {% endfor %}
+        <br>
     {% else %}
         <p>This project is not defined. Did you request the correct ID?</p>
     {% endif %}

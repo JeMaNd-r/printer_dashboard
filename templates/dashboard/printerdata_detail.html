@@ -1,0 +1,41 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+
+<ul id="navigation-bar">
+    <li><a href="{% url "dashboard:dashboard" %}">Dashboard</a></li>
+    <li><a href="{% url "dashboard:stats" %}">Stats</a></li>
+    <li><a href="{% url "dashboard:project-list" %}">Project List</a></li>
+    <li><a class="active" href="{% url "dashboard:printerdata-detail" object.id %}">
+        PrinterData ID {{ object.id }}
+    </a></li>
+</ul>
+
+<div class="main">
+    <h1>Printer Data detail</h1>
+
+    {% if object %}
+        <p>You are viewing Printer Data {{ object.id }}</p>
+        <h2>Printer state: {{ object.state }}</h2>
+        <p>Detailed state: {{ object.detailed_state }}</p>
+        <p>created on {{ object.created_at.date }} and last updated on {{ object.updated_at.date }}</p>
+        <p>Nozzle temperature: {{ object.temperature_nozzle }}</p>
+        <p>Project: {{ object.project_id }}</p>
+        <br>
+        {% if object.chamber_image %}
+            <p>Chamber image:</p>
+            <img src = "{{ object.chamber_image.url }}" alt="img" height="300">
+        {% else %}
+            <p>No chamber image available.</p>
+        {% endif %}
+    {% else %}
+        <p>This printer state is not defined. Did you request the correct ID?</p>
+    {% endif %}
+
+    <br>
+    <p><a href="{% url "dashboard:stats" %}">Back</a> to the list of printer data.</p>
+
+
+</div>
+
+{% endblock %}

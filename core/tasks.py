@@ -2,4 +2,4 @@ from core.data_updater import DatabaseUpdater
 
 
 def update_database() -> None:
-    DatabaseUpdater().run()
+    DatabaseUpdater(with_image=True).run()

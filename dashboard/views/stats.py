@@ -8,3 +8,8 @@ class PrinterDataListView(generic.ListView):
     template_name = "dashboard/printerdata_list.html"
 
     queryset = PrinterData.objects.order_by("-created_at")
+
+
+class PrinterDataDetailView(generic.DetailView):
+    model = PrinterData
+    template_name = "dashboard/printerdata_detail.html"

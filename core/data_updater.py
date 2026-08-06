@@ -1,5 +1,7 @@
+from io import BytesIO
 from typing import Optional
 
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from PIL import Image
 
 from core.models import PrinterData, PrinterStateChoices, Project, ProjectStatusChoices
@@ -72,8 +74,11 @@ class DatabaseUpdater:
         p.is_light_on = True if light_state == "on" else False
 
         if with_image:
-            p.chamber_image = image
-
+            image_io = BytesIO()
+            image.save(image_io, format="JPEG")
+            p.chamber_image = InMemoryUploadedFile(
+                image_io, None, "image.jpg", "image/jpeg", len(image_io.getvalue()), None
+            )
         return p
 
     @staticmethod
@@ -193,15 +198,16 @@ class DatabaseUpdater:
                 if printer_data.state == PrinterStateChoices.FAILED:
                     printer_data.project = latest_stored_state.project
 
-                    new_project_status = ProjectStatusChoices.UNKNOWN
+                    Project.objects.filter(id=printer_data.project_id).update(status=ProjectStatusChoices.UNKNOWN)
+
                     print("WARNING: Printer status FAILED.")
                     print(f"Project status {latest_stored_state.project_id} is set to UNKNOWN")
 
-                # If not FAILED, change project status to DONE
+                # If not FAILED, change project status to DONE and add image from current printing state
                 else:
-                    new_project_status = ProjectStatusChoices.DONE
-
-                Project.objects.filter(id=printer_data.project_id).update(status=new_project_status)
+                    Project.objects.filter(id=printer_data.project_id).update(
+                        status=ProjectStatusChoices.DONE, image=printer_data.chamber_image
+                    )
 
             return
 

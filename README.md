@@ -97,3 +97,13 @@ When? Each push to a protected branch or a branch that has an open merge request
 #### Deployment to our v2 staging server
 
 When? Each push to a protected branch.
+
+
+## Contributing
+
+This is a personal learning project and is not open to contributions. Thank you for your understanding.
+
+
+## Acknowledgments
+
+The project idea and technical support was provided by [singularIT](https://github.com/singularit-de) in the frame of an internship.

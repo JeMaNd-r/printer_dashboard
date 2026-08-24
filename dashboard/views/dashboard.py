@@ -26,14 +26,12 @@ class DashboardView(FormView):
         latest_printer_data = PrinterData.objects.order_by("created_at").last()
         is_light_on: Optional[bool] = latest_printer_data.is_light_on
         printer_data: Optional[PrinterData] = latest_printer_data
-        if (
-            printer_data.temperature_chamber > 30
-            or printer_data.temperature_bed > 30
-            or printer_data.temperature_nozzle > 30
-        ):
-            is_hot = True
-        else:
-            is_hot = False
+
+        is_hot = (
+            (getattr(printer_data, "temperature_chamber", 0) or 0) > 30
+            or (getattr(printer_data, "temperature_bed", 0) or 0) > 30
+            or (getattr(printer_data, "temperature_nozzle", 0) or 0) > 30
+        )
 
         context = {
             "is_running_regularly": is_running_regularly,

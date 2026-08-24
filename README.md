@@ -39,23 +39,36 @@ Django application with browsable API and OpenAPI to request and view statistics
    uv run manage.py runserver
    ```
 
-5. Install pre-commit hooks:
+5. Load migrations
+
+   ```bash
+   uv run manage.py migrate
+   ```
+
+6. Install pre-commit hooks:
 
    ```bash
    pre-commit install
    ```
 
-6. Load fixture for Django admin interface theme
+7. Load fixture for Django admin interface theme
 
    ```bash
    uv run manage.py loaddata admin_interface_theme_singularIT.json
    ```
 
-7. Start QCluster
+8. Start QCluster
 
    ```bash
    uv run .\manage.py qcluster
    ```
+
+
+If you wanna see the web app functionalities without being able or willing to connect to a printer, you can create fake data using the seeder.
+
+```bash
+uv run .\manage.py seed
+```
 
 ## GitLab CI/CD
 

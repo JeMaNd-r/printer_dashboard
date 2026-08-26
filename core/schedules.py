@@ -9,7 +9,9 @@ def retrieve_printer_data_once() -> int:
 
 def retrieve_printer_data_regularly() -> None:
     """Create schedule that updates database regularly"""
-    schedule("core.tasks.update_database", name="Printer data retrieval regularly", schedule_type="I", minutes=2)
+
+    if not Schedule.objects.filter(name="Printer data retrieval regularly").exists():
+        schedule("core.tasks.update_database", name="Printer data retrieval regularly", schedule_type="I", minutes=2)
 
 
 def stop_retrieving_printer_data() -> None:

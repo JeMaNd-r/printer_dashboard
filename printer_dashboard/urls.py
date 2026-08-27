@@ -25,14 +25,15 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 
-from printer_dashboard.view_csrf import csrf
+from printer_dashboard.views import csrf, user
 
 urlpatterns = [
     path(".admin/", admin.site.urls),
     path("api/", SpectacularSwaggerView.as_view(), name="swagger-ui"),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api-auth/", include("rest_framework.urls")),
-    path("api-auth/csrf/", csrf),
+    path("api-auth/csrf/", csrf.csrf),
+    path("api-auth/user/", user.UserView.as_view()),
     path("dashboard/", include("dashboard.urls")),
     path("core/", include("core.urls")),
 ]

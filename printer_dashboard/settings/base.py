@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "django_filters",
     "django_q",
+    "corsheaders",
 ]
 
 # Security

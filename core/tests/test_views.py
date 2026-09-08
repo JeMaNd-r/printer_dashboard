@@ -1,53 +1,14 @@
-import random
 from typing import Any
 from unittest.mock import MagicMock, patch
 
 from bambulabs_api import GcodeState, PrintStatus
+from django.db.models import F
 from django.test import TestCase
 
 from core.data_updater import DatabaseUpdater
-from core.factories import PrinterDataFactory, ProjectFactory, UserFactory
+from core.factories import ProjectFactory
 from core.models import PrinterData, PrinterStateChoices, Project, ProjectStatusChoices
-from users.models import User
-
-
-class TestModels(TestCase):
-    """
-    Test the core models
-    """
-
-    def test_user_creation(self) -> None:
-        """Check that the user model can be created successfully"""
-        u = UserFactory(first_name="ABCD")
-
-        self.assertEqual(u.first_name, "ABCD")
-        self.assertQuerySetEqual(User.objects.order_by("id"), [u])
-
-    def test_project_creation(self) -> None:
-        """Check that the project model can be created successfully"""
-        project_status = random.choice(ProjectStatusChoices.values)
-        project_name = "This is the projects name"
-        p = ProjectFactory(project_name=project_name, status=project_status)
-        update_date = p.updated_at
-        self.assertQuerySetEqual(Project.objects.order_by("id"), [p])
-        self.assertEqual(p.project_name, project_name)
-        self.assertEqual(p.status, project_status)
-        self.assertEqual(p.owner.id, User.objects.first().id)
-        self.assertEqual(p.__str__(), f"{project_name} from User ID {p.owner.id}")
-
-        p.project_description = "Bla bla bla"  # to test modified date
-        p.save()
-        self.assertTrue(update_date < p.updated_at)
-
-    def test_printer_status_creation(self) -> None:
-        """Check that the printer status model can be created successfully"""
-        printer_state = random.choice(PrinterStateChoices.values)
-        s = PrinterDataFactory(state=printer_state)
-
-        self.assertQuerySetEqual(PrinterData.objects.order_by("id"), [s])
-        self.assertEqual(s.state, printer_state)
-        self.assertEqual(s.project.id, Project.objects.first().id)
-        self.assertEqual(s.__str__(), f"{printer_state} at {s.created_at}")
+from core.tests.utils import generate_test_image
 
 
 class TestDatabaseUpdates(TestCase):
@@ -198,21 +159,34 @@ class TestDatabaseUpdates(TestCase):
         self.assertEqual(latest_printer_data.project_id, previous_printer_data.project_id)
 
     @patch("core.data_updater.DatabaseUpdater.get_and_prepare_printer_data")
-    def test_update_projects_when_previous_different(self, mock_get_and_prepare_printer_data):
+    def test_update_projects_when_previous_state_different(self, mock_get_and_prepare_printer_data):
         """
         If new PrinterData is printing and different from state before,
         add Project to database and link to current printer status
         """
 
-        # running (+ project) -> failed -> running (+ project) > idle -> running (+ project)
-        mock_get_and_prepare_printer_data.return_value = PrinterData(state=PrinterStateChoices.RUNNING)
-        DatabaseUpdater().run()
+        # test cycle: running (+ project) -> failed -> running (+ project) -> idle -> running (+ project)
+        test_image_1 = generate_test_image(image_name="test_image_1", color="#000000")
+
+        mock_get_and_prepare_printer_data.return_value = PrinterData(
+            state=PrinterStateChoices.RUNNING, chamber_image=test_image_1
+        )
+        DatabaseUpdater(with_image=True).run()
 
         self.assertEqual(Project.objects.count(), 1)
-        self.assertEqual(Project.objects.first().status, ProjectStatusChoices.PRINTING)
 
-        mock_get_and_prepare_printer_data.return_value = PrinterData(state=PrinterStateChoices.FAILED)
-        DatabaseUpdater().run()
+        project_first = Project.objects.first()
+        self.assertEqual(project_first.status, ProjectStatusChoices.PRINTING)
+        self.assertIsNotNone(project_first.image)
+        self.assertEqual(project_first.image.name, "test_image_1.jpeg")
+        # TODO: why image field none? not saved because of logic or issue with test?
+
+        # before: running, now: failed
+        mock_get_and_prepare_printer_data.return_value = PrinterData(
+            state=PrinterStateChoices.FAILED,
+            chamber_image=generate_test_image(image_name="test_image_2", color="#AAAAAA"),
+        )
+        DatabaseUpdater(with_image=True).run()
 
         latest_printer_data = PrinterData.objects.order_by("-created_at").first()
 
@@ -220,22 +194,46 @@ class TestDatabaseUpdates(TestCase):
         self.assertEqual(latest_printer_data.gcode_file_name, PrinterData.objects.first().gcode_file_name)
         self.assertEqual(Project.objects.count(), 1)
         self.assertIsNotNone(latest_printer_data.project)
-        self.assertEqual(Project.objects.first().status, ProjectStatusChoices.UNKNOWN)
 
-        mock_get_and_prepare_printer_data.return_value = PrinterData(state=PrinterStateChoices.RUNNING)
-        DatabaseUpdater().run()
+        project_updated = Project.objects.first()
+        self.assertEqual(project_updated.status, ProjectStatusChoices.UNKNOWN)
+        self.assertIsNotNone(project_updated.image)
+        self.assertNotEqual(project_first.image, project_updated.image)
+        self.assertEqual(Project.objects.filter(image=F("test_image_1")).count(), 0)  # should be replaced
+
+        # before: failed, now: running
+        test_image_3 = generate_test_image(image_name="test_image_3", color="#ff0000")
+
+        mock_get_and_prepare_printer_data.return_value = PrinterData(
+            state=PrinterStateChoices.RUNNING, chamber_image=test_image_3
+        )
+        DatabaseUpdater(with_image=True).run()
 
         self.assertEqual(PrinterData.objects.count(), 3)
         self.assertEqual(Project.objects.count(), 2)
+        self.assertEqual(Project.objects.filter(image=F("test_image_3")).count(), 1)
 
-        mock_get_and_prepare_printer_data.return_value = PrinterData(state=PrinterStateChoices.IDLE)
-        DatabaseUpdater().run()
+        # before: running, now: idle
+        mock_get_and_prepare_printer_data.return_value = PrinterData(
+            state=PrinterStateChoices.IDLE,
+            chamber_image=generate_test_image(image_name="test_image_4", color="#0000ff"),
+        )
+        DatabaseUpdater(with_image=True).run()
 
         self.assertEqual(PrinterData.objects.count(), 4)
         self.assertEqual(Project.objects.count(), 2)
 
-        mock_get_and_prepare_printer_data.return_value = PrinterData(state=PrinterStateChoices.RUNNING)
-        DatabaseUpdater().run()
+        project_idle = Project.objects.order_by("-created_at").first()
+
+        self.assertEqual(project_idle.status, ProjectStatusChoices.PRINTING)
+        self.assertEqual(project_idle.image.name, "test_image_3.jpeg")
+
+        # before: idle, now: running
+        mock_get_and_prepare_printer_data.return_value = PrinterData(
+            state=PrinterStateChoices.RUNNING,
+            chamber_image=generate_test_image(image_name="test_image_5", color="#00ff00"),
+        )
+        DatabaseUpdater(with_image=True).run()
 
         self.assertEqual(PrinterData.objects.count(), 5)
         self.assertEqual(Project.objects.count(), 3)

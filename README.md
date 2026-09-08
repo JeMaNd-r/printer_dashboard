@@ -3,6 +3,8 @@
 
 Django application with browsable API and OpenAPI to request and view statistics of the 3D printer from BambuLab.
 
+Check out the dedicated frontend, which has been built with NuxtUI/Vue: [JeMaNd-r/printer_frontend](https://github.com/JeMaNd-r/printer_frontend)
+
 
 ## Tech stack
 

@@ -39,6 +39,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         view_name="core:project-detail",
         lookup_field="pk",
     )
+    last_printer_state = serializers.SerializerMethodField()
 
     class Meta:
         model: Type[Project] = Project
@@ -53,7 +54,22 @@ class ProjectSerializer(serializers.ModelSerializer):
             "is_created_manually",
             "owner",
             "printer_states",
+            "last_printer_state",
         ]
+
+    def get_last_printer_state(self, project):
+        state = project.printer_states.order_by("-created_at", "-id").first()
+
+        if state is None:
+            return None
+
+        return {
+            "id": state.id,
+            "state": state.state,
+            "detailed_state": state.detailed_state,
+            "created_at": state.created_at,
+            "percentage": state.percentage,
+        }
 
 
 class PrinterDataSerializer(serializers.ModelSerializer):
@@ -84,9 +100,18 @@ class PrinterDataSerializer(serializers.ModelSerializer):
             "id",
             "state",
             "detailed_state",
+            "gcode_file_name",
+            "source_type",
+            "subtask_name",
+            "current_layer_number",
+            "total_layers",
             "created_at",
             "is_light_on",
+            "wifi_signal_dbm",
             "percentage",
             "project",
             "temperature_nozzle",
+            "temperature_bed",
+            "temperature_chamber",
+            "chamber_image",
         ]

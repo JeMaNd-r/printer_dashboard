@@ -49,6 +49,14 @@ class TestModels(TestCase):
         self.assertEqual(s.project.id, Project.objects.first().id)
         self.assertEqual(s.__str__(), f"{printer_state} at {s.created_at}")
 
+    def test_printer_data_is_ordered_latest_first(self) -> None:
+        """Printer data defaults to newest creation time, then newest ID."""
+        project = ProjectFactory()
+        first = PrinterDataFactory(project=project)
+        second = PrinterDataFactory(project=project)
+
+        self.assertEqual(list(project.printer_states.all()), [second, first])
+
 
 class TestDatabaseUpdates(TestCase):
     """

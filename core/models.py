@@ -90,5 +90,8 @@ class PrinterData(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ["-created_at", "-id"]
+
     def __str__(self) -> str:
         return f"{self.state} at {self.created_at}"

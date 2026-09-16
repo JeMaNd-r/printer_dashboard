@@ -67,6 +67,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             "id": state.id,
             "state": state.state,
             "detailed_state": state.detailed_state,
+            "detailed_state_label": state.get_detailed_state_display(),
             "created_at": state.created_at,
             "percentage": state.percentage,
         }
@@ -81,6 +82,11 @@ class PrinterDataSerializer(serializers.ModelSerializer):
     Project url leads to project detail view.
     In addition, provide URL linking to printer status detail view.
     """
+
+    detailed_state_label = serializers.CharField(
+        source="get_detailed_state_display",
+        read_only=True,
+    )
 
     project = serializers.HyperlinkedRelatedField(
         many=False,
@@ -100,6 +106,7 @@ class PrinterDataSerializer(serializers.ModelSerializer):
             "id",
             "state",
             "detailed_state",
+            "detailed_state_label",
             "gcode_file_name",
             "source_type",
             "subtask_name",
